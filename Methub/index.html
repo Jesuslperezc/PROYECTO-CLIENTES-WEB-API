@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetHub — Explorador del Met Museum</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  
+    <!-- Barra de navegación global (Persistente) -->
+    <nav id="navbar">
+        <a href="#home" id="logo">MetHub</a>
+        <div class="nav-links">
+            <a href="#home" class="nav-link active">Inicio</a>
+            <a href="#explore" class="nav-link">Explorar</a>
+            <a href="#departments" class="nav-link">Departamentos</a>
+            <a href="#compare" class="nav-link">Comparar</a>
+        </div>
+    </nav>
+ 
+    <!-- Contenedor dinámico de vistas -->
+    <main id="main-content">
+
+        <!-- V-01: Página Principal (#home) -->
+        <section id="V-01" class="view">
+            <div id="hero">
+                <h1>Explora la colección del Met</h1>
+                <p id="descripcion-hero">El Met alberga cerca de medio millón de obras que narran la historia del ingenio humano. 
+                Cruzando continentes y eras, su colección celebra la diversidad y la belleza del arte universal. 
+                Bienvenidos a MetHub, tu portal abierto a la colección del museo más grande del hemisferio occidental.</p>
+            </div>
+            
+            <!-- Contenedor para las estadísticas de la API -->
+            <div id="stats-container">
+                <!-- con JS las tarjetas de estadísticas -->
+            </div>
+            
+            <h2>Obras Destacadas</h2>
+            <div id="grid-destacados" class="galeria-grid">
+                <!-- Aquí se inyectarán las 8-12 tarjetas destacadas -->
+            </div>
+        </section>
+
+        <!-- V-02: Explorar (#explore) -->
+        <section id="V-02" class="view d-none">
+            <div class="explore-layout">
+                <!-- Panel de filtros (Controles de Rosa) -->
+                <aside id="panel-filtros">
+                    <!-- Selector deptos, slider años, checkboxes y botón limpiar -->
+                </aside>
+                
+                <!-- Panel de Agregados en Vivo y Resultados -->
+                <div class="explore-results">
+                    <div id="panel-agregados">
+                        <!-- Métricas en vivo calculadas por ti en JS -->
+                    </div>
+                    <div id="grid-explorar" class="galeria-grid">
+                        <!-- Galería paginada de 12 tarjetas -->
+                    </div>
+                    <div id="paginacion-controls">
+                        <!-- Botones de Anterior / Siguiente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- V-03: Detalle de Obra (#detail/:id) -->
+        <section id="V-03" class="view d-none">
+            <button id="btn-volver-detalle" class="btn-back">← Volver</button>
+            <div class="detail-layout">
+            
+                <div class="detail-media">
+                    <div id="artwork-image-container"></div>
+                    <div id="artwork-additional-images" class="gallery-thumbnails"></div>
+                </div>
+              
+                <div class="detail-info">
+                    <h1 id="artwork-title"></h1>
+                    <div id="artwork-specs"></div>
+                    <div id="artwork-actions">
+               
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+       
+        <section id="V-04" class="view d-none">
+            <h2>Departamentos Curatoriales</h2>
+            <div id="grid-departamentos" class="departments-grid">
+              
+            </div>
+        </section>
+
+        <!-- V-05: Obras del Artista (#artist/:name) -->
+        <section id="V-05" class="view d-none">
+            <button id="btn-volver-artista" class="btn-back">← Volver</button>
+            <div id="artist-header">
+                <h1 id="artist-name-title"></h1>
+                <p id="artist-bio"></p>
+                <span id="artist-total-works"></span>
+            </div>
+            <div id="grid-artista" class="galeria-grid">
+                <!-- Obras del artista paginadas -->
+            </div>
+        </section>
+
+        <!-- V-06: Comparador (#compare) -->
+        <section id="V-06" class="view d-none">
+            <h2>Comparador de Obras</h2>
+            <div class="compare-layout">
+          
+                <div id="compare-panel-a" class="compare-panel">
+        
+                </div>
+                <!-- Panel Obra B -->
+                <div id="compare-panel-b" class="compare-panel">
+        
+                </div>
+            </div>
+           
+            <div id="compare-table-container" class="d-none">
+       
+            </div>
+        </section>
+
+    </main>
+
+
+    <footer id="main-footer">
+        <p>© 2026 MetHub. Desarrollado por Jesús Pérez y Rosavirginia Lujan.</p>
+        <p class="api-disclaimer">Datos provistos por la Open Access API del Metropolitan Museum of Art. Esta aplicación no está afiliada al museo.</p>
+    </footer>
+
+
+    <script src="js/app.js"></script>
+</body>
+</html>

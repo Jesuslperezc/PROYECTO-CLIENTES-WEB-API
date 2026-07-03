@@ -45,21 +45,49 @@
         <!-- V-02: Explorar (#explore) -->
         <section id="V-02" class="view d-none">
             <div class="explore-layout">
-                <!-- Panel de filtros (Controles de Rosa) -->
+                <!-- Panel de filtros -->
                 <aside id="panel-filtros">
-                    <!-- Selector deptos, slider años, checkboxes y botón limpiar -->
-                </aside>
-                
-                <!-- Panel de Agregados en Vivo y Resultados -->
+                    <h3>Filtros de Búsqueda</h3>
+                    
+                    <!-- 1. CAJA DE BÚSQUEDA -->
+                    <div class="control-group">
+                        <label for="search-input">Buscar palabra clave:</label>
+                        <input type="text" id="search-input" placeholder="Ej. Sunflowers, Picasso, Gold...">
+                    </div>
+
+                    <!-- 2. SELECTOR DE DEPARTAMENTOS -->
+                    <div class="control-group">
+                        <label for="select-departamento">Departamento:</label>
+                        <select id="select-departamento">
+                            <option value="">Todos los departamentos</option>
+                            <!-- Las opciones se pueden rellenar fijas o con JS -->
+                        </select>
+                    </div>
+
+                    <!-- 3. CHECKBOXES DE REQUERIMIENTOS -->
+                    <div class="control-group checkboxes">
+                        <label>
+                            <input type="checkbox" id="check-destacadas"> Solo obras destacadas
+                        </label>
+                        <label>
+                            <input type="checkbox" id="check-imagenes" checked> Solo con imágenes
+                        </label>
+                    </div>
+
+                    <!-- 4. BOTÓN DE ACCIÓN -->
+                    <button id="btn-buscar" class="btn-primary">Buscar en la Colección</button>
+                    <button id="btn-limpiar" class="btn-secondary">Limpiar Filtros</button>
+                </aside>     
+                <!-- Panel de agregados y resultados -->
                 <div class="explore-results">
                     <div id="panel-agregados">
-                        <!-- Métricas en vivo calculadas por ti en JS -->
+                        <!-- Metricas en vivo calculadas en JS -->
                     </div>
                     <div id="grid-explorar" class="galeria-grid">
-                        <!-- Galería paginada de 12 tarjetas -->
+                        <!-- Galeria paginada de 12 tarjetas -->
                     </div>
                     <div id="paginacion-controls">
-                        <!-- Botones de Anterior / Siguiente -->
+                        <!-- Botones de anterior y siguiente -->
                     </div>
                 </div>
             </div>
@@ -135,5 +163,6 @@
 
 
     <script src="js/app.js"></script>
+    <script src="js/components/navbar.js"></script>
 </body>
 </html>

@@ -32,3 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+document.body.appendChild(createFooter());
+})

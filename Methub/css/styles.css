@@ -49,3 +49,125 @@
     border-bottom: 2px solid #e60000; /* Subrayado para marcar donde esta */
 }
 
+
+/* Footer */
+#main-footer {
+    background-color: #111111;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border-top: 1px solid #222222;
+    margin-top: 4rem;
+}
+
+/* Contenedor de creditos */
+.footer-clickable-box {
+    cursor: pointer;
+    display: inline-block;
+    transition: opacity 0.3s ease;
+}
+
+/* Cambio de color al pasar el mouse */
+.footer-clickable-box:hover .footer-credits,
+.footer-clickable-box:hover .api-disclaimer {
+    color: #ffffff; 
+}
+
+.footer-credits {
+    color: #aaaaaa;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 0.4rem 0; 
+}
+
+.api-disclaimer {
+    color: #aaaaaa;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.endscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 9999;
+    animation: fadeInOverlay 0.3s ease-out forwards;
+}
+
+.endscreen-content {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border: 1px solid #333333;
+    width: 90%;
+    max-width: 500px; 
+    box-sizing: border-box;
+    position: relative;
+    text-align: left;
+    animation: scaleInContent 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.endscreen-content h2 {
+    margin-top: 0;
+    font-size: 1.6rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.endscreen-divider {
+    border: 0;
+    border-top: 2px solid #e60000;
+    margin: 1rem 0 1.5rem 0;
+}
+
+.endscreen-section {
+    margin-bottom: 1.5rem;
+}
+
+.endscreen-section h3 {
+    color: #e60000;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.endscreen-section p {
+    color: #cccccc;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 0.5rem 0;
+}
+
+.endscreen-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 2.2rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.endscreen-close:hover {
+    color: #e60000;
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleInContent {
+    from { transform: scale(0.9) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}

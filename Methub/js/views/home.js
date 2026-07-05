@@ -1,6 +1,5 @@
 const API_BASE = "https://collectionapi.metmuseum.org/public/collection/v1";
 
-
 async function cargarVistaHome() {
     const statsContainer = document.getElementById('stats-container');
     const gridDestacados = document.getElementById('grid-destacados');
@@ -46,7 +45,7 @@ async function cargarVistaHome() {
         statsContainer.appendChild(card1);
         statsContainer.appendChild(card2);
 
-        const idsAInterrogar = dataObras.objectIDs.slice(0, 10);
+        const idsAInterrogar = dataObras.objectIDs.slice(0, 15);
 
         const promesasObjetos = idsAInterrogar.map(id => 
             fetch(`${API_BASE}/objects/${id}`).then(res => {
@@ -59,16 +58,31 @@ async function cargarVistaHome() {
 
         gridDestacados.textContent = "";
 
+        let tarjetasRenderizadas = 0;
+
         resultados.forEach(item => {
+            if (tarjetasRenderizadas >= 10) return;
+
             if (item.status === 'fulfilled') {
                 const obra = item.value; 
+
+                if (!obra.primaryImageSmall) {
+                    return;
+                }
+
+                tarjetasRenderizadas++;
 
                 const card = document.createElement('article');
                 card.className = 'obra-card';
 
                 const img = document.createElement('img');
-                img.src = obra.primaryImageSmall || 'https://via.placeholder.com/150';
+                img.src = obra.primaryImageSmall;
                 img.alt = obra.title || 'Obra de arte sin título';
+                
+                img.onerror = () => {
+                    card.remove();
+                };
+                
                 card.appendChild(img);
 
                 const title = document.createElement('h4');

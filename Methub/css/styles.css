@@ -1,6 +1,61 @@
 .d-none {
     display: none !important;
 }
+#metsy-container {
+    position: fixed;
+    bottom: 10px; /* Lo pegamos un pelo más abajo para compensar el tamaño */
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    z-index: 9999;
+    font-family: 'Courier New', Courier, monospace;
+    pointer-events: none; /* Clave: el contenedor invisible no estorba */
+}
+
+#metsy-bubble {
+    background: #fff;
+    color: #000;
+    border: 3px solid #000;
+    padding: 14px;
+    border-radius: 12px;
+    max-width: 250px; /* Un pelo más ancho para que balancee con el Metsy gigante */
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: -10px; /* Margen negativo para que el globo flote justo encima del orbe */
+    position: relative;
+    box-shadow: 5px 5px 0px #000;
+    pointer-events: auto; 
+}
+
+#metsy-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    right: 50px; /* Centrado respecto al avatar grande */
+    border-width: 12px 12px 0;
+    border-style: solid;
+    border-color: #000 transparent;
+    display: block;
+    width: 0;
+}
+
+#metsy-avatar {
+    width: 280px; /* ¡Ahora sí está gigante y vistoso! */
+    height: 280px;
+    cursor: pointer;
+    object-fit: cover;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animación tipo pop-out más agresiva */
+    pointer-events: auto;
+    
+    /* Cortamos el hitbox matemático para que solo la esfera sea clickeable */
+    border-radius: 50%;
+    clip-path: circle(42% at 50% 50%); /* Ajustamos el radio al 42% para ceñir el corte al borde real del orbe */
+}
+
+#metsy-avatar:hover {
+    transform: scale(1.05); /* Un sutil escalado para que mantenga el drip sin salirse de la pantalla */
+}
 /* Contenedor general de las estadísticas */
 #stats-container {
     display: flex;

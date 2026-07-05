@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbarElement = createNavBar();
     document.body.insertBefore(navbarElement, document.body.firstChild);
     document.body.appendChild(createFooter());
+    inyectarMetsy();
 
     function navigate(currentHash) {
         updateActiveNavLink(currentHash);

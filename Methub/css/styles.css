@@ -1,6 +1,73 @@
 .d-none {
     display: none !important;
 }
+/* Contenedor general de las estadísticas */
+#stats-container {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+/* Tarjeta individual de estadística */
+.stat-card {
+    background-color: #1a1a1a; /* O el color oscuro que tenga el navbar de Rosa */
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 150px;
+    text-align: center;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    margin: 0 0 5px 0;
+    color: #ff3333; /* Color de acento para los números, combinando con el rojo de Inicio */
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* El grid de las tarjetas destacadas para que no se desparramen */
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* Tarjeta de cada obra */
+.obra-card {
+    background-color: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.obra-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.obra-card h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.artist-text {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #888;
+}
 
 /* Contenedor principal del navbar */
 #navbar {

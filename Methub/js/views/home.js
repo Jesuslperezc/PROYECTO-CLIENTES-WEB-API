@@ -74,15 +74,17 @@ async function cargarVistaHome() {
 
                 const card = document.createElement('article');
                 card.className = 'obra-card';
+                
+            
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    window.location.hash = `#detail/${obra.objectID}`;
+                });
 
                 const img = document.createElement('img');
                 img.src = obra.primaryImageSmall;
                 img.alt = obra.title || 'Obra de arte sin título';
-                
-                img.onerror = () => {
-                    card.remove();
-                };
-                
+                img.onerror = () => card.remove();
                 card.appendChild(img);
 
                 const title = document.createElement('h4');
@@ -93,6 +95,12 @@ async function cargarVistaHome() {
                 artist.className = 'artist-text';
                 artist.textContent = obra.artistDisplayName || 'Artista Desconocido';
                 card.appendChild(artist);
+
+             
+                const infoExtra = document.createElement('p');
+                infoExtra.className = 'info-extra';
+                infoExtra.textContent = `${obra.objectDate} | ${obra.department}`;
+                card.appendChild(infoExtra);
 
                 gridDestacados.appendChild(card);
             } else {

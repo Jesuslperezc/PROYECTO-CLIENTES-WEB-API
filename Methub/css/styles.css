@@ -85,44 +85,103 @@
     color: #aaa;
 }
 
-/* El grid de las tarjetas destacadas para que no se desparramen */
-.galeria-grid {
+
+/* Contenedor del Grid */
+#grid-destacados {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
-    margin-top: 20px;
+    padding: 20px;
 }
 
-/* Tarjeta de cada obra */
+/* La Tarjeta de Obra */
 .obra-card {
-    background-color: #111;
-    border: 1px solid #222;
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
     overflow: hidden;
-    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    padding-bottom: 15px;
 }
 
+.obra-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Imagen */
 .obra-card img {
     width: 100%;
-    height: 200px;
+    height: 250px;
     object-fit: cover;
-    border-radius: 4px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
+/* Títulos y textos */
 .obra-card h4 {
-    margin: 0;
+    margin: 15px 15px 5px 15px;
     font-size: 1.1rem;
-    color: #fff;
+    color: #1a1a1a;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
 .artist-text {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #888;
+    margin: 0 15px;
+    font-size: 0.9rem;
+    color: #3f0606;
+    font-style: italic;
 }
+
+/* Nueva clase para Fecha y Departamento */
+.info-extra {
+    margin: 10px 15px 0 15px;
+    font-size: 0.8rem;
+    color: #2c2c2c;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-top: 1px solid #f9f9f9;
+    padding-top: 10px;
+}
+
+#modal-detail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 3px solid #000;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+
 
 /* Contenedor principal del navbar */
 #navbar {

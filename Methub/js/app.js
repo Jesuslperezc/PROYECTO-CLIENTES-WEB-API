@@ -1,19 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const navbarElement = createNavBar();
     document.body.insertBefore(navbarElement, document.body.firstChild);
+    document.body.appendChild(createFooter());
 
-    const initialHash = window.location.hash || '#home';
-    updateActiveNavLink(initialHash);
-
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash;
-        updateActiveNavLink(hash);
-    });
     function navigate(currentHash) {
         updateActiveNavLink(currentHash);
+        
         document.querySelectorAll('.view').forEach(view => view.classList.add('d-none'));
-        if (currentHash === '#home' || currentHash === '') {
+        
+        if (currentHash === '#home' || currentHash === '' || currentHash === '#') {
             document.getElementById('V-01').classList.remove('d-none');
+            cargarVistaHome();
         } 
         else if (currentHash === '#explore') {
             document.getElementById('V-02').classList.remove('d-none');
@@ -31,8 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('V-06').classList.remove('d-none');
         }
     }
-})
 
-document.addEventListener('DOMContentLoaded', () => {
-document.body.appendChild(createFooter());
-})
+    window.addEventListener('hashchange', () => {
+        navigate(window.location.hash);
+    });
+
+    const initialHash = window.location.hash || '#home';
+    navigate(initialHash);
+});

@@ -4,65 +4,54 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(createFooter());
     inyectarMetsy();
 
-    function abrirModalDetalle(id) {
-    const modal = document.createElement('div');
-    modal.id = 'modal-detail';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div id="modal-body">Cargando detalles...</div>
-        </div>
-    `;
+    let ultimaVistaActiva = null;
 
-    document.body.appendChild(modal);
+    function navigate(currentHash) {
+        if (!currentHash || currentHash === '#') {
+            currentHash = '#home';
+        }
 
-    modal.querySelector('.close-modal').addEventListener('click', () => {
-        modal.remove();
-        window.history.back(); // Regresa al hash anterior
-    });
+        updateActiveNavLink(currentHash);
+        actualizarMensajeMetsy(currentHash);
 
-    // Fetch del objeto y renderizado en #modal-body
-    fetch(`${API_BASE}/objects/${id}`)
-        .then(res => res.json())
-        .then(obra => {
-            document.getElementById('modal-body').innerHTML = `
-                <h2>${obra.title}</h2>
-                <img src="${obra.primaryImage}" style="width:100%">
-                <p><strong>Artista:</strong> ${obra.artistDisplayName || 'Desconocido'}</p>
-                <p><strong>Fecha:</strong> ${obra.objectDate}</p>
-            `;
-        });
-}
+        if (currentHash.startsWith('#detail/')) {
+            const id = currentHash.split('/')[1];
+            abrirModalDetalle(id);
+            return; 
+        }
 
-   function navigate(currentHash) {
-    updateActiveNavLink(currentHash);
-    actualizarMensajeMetsy(currentHash);
-    
-    // Ocultar todas las vistas
-    document.querySelectorAll('.view').forEach(view => view.classList.add('d-none'));
+        const modalExistente = document.getElementById('modal-detail');
+        if (modalExistente) {
+            modalExistente.remove();
+        }
 
-    if (currentHash.startsWith('#detail/')) {
-        const id = currentHash.split('/')[1];
-        abrirModalDetalle(id);
+        let idVista;
+        if (currentHash === '#home') idVista = 'V-01';
+        else if (currentHash === '#explore') idVista = 'V-02';
+        else if (currentHash === '#departments') idVista = 'V-04';
+        else if (currentHash === '#compare') idVista = 'V-06';
+
+        if (ultimaVistaActiva === idVista) {
+            return;
+        }
+
+        document.querySelectorAll('.view').forEach(view => view.classList.add('d-none'));
+        
+        const contenedorVista = document.getElementById(idVista);
+        if (contenedorVista) {
+            contenedorVista.classList.remove('d-none');
+        }
+
+        ultimaVistaActiva = idVista;
+
+        if (currentHash === '#home') {
+            cargarVistaHome();
+        } else if (currentHash === '#explore') {
+            initExplorer(); 
+        } else if (currentHash === '#departments') {
+            initDepartments();
+        }
     }
-    else if (currentHash.startsWith('#artist/')) {
-        document.getElementById('V-05').classList.remove('d-none');
-    }
-    // 2. Rutas estáticas después
-    else if (currentHash === '#home' || currentHash === '' || currentHash === '#') {
-        document.getElementById('V-01').classList.remove('d-none');
-        cargarVistaHome();
-    } 
-    else if (currentHash === '#explore') {
-        document.getElementById('V-02').classList.remove('d-none');
-    } 
-    else if (currentHash === '#departments') {
-        document.getElementById('V-04').classList.remove('d-none');
-    } 
-    else if (currentHash === '#compare') {
-        document.getElementById('V-06').classList.remove('d-none');
-    }
-}
 
     window.addEventListener('hashchange', () => {
         navigate(window.location.hash);

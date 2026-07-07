@@ -356,3 +356,46 @@
     from { transform: scale(0.9) translateY(20px); opacity: 0; }
     to { transform: scale(1) translateY(0); opacity: 1; }
 }
+
+
+/* LOADING */
+loading-state {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: block;
+}
+
+.loading-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; 
+    justify-content: center !important;
+    padding: 2rem;
+    width: 100%;
+    min-height: 50vh;           
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #222222;
+    border-top: 5px solid #e60000;
+    border-radius: 50%;
+    display: block !important;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+}
+
+.loading-text {
+    color: #ffffff; 
+    font-size: 1.1rem;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -8,7 +8,8 @@ async function cargarVistaHome() {
     gridDestacados.textContent = "";
 
     statsContainer.innerHTML = "<p>Cargando estadísticas...</p>";
-    gridDestacados.innerHTML = "<div class='loading-skeleton'>Cargando obras maestras...</div>";
+    const spinnerRojo = document.createElement('loading-state');
+    gridDestacados.appendChild(spinnerRojo);
 
     try {
         const [resDept, resObras] = await Promise.all([

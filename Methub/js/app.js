@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const nombreArtista = decodeURIComponent(artistaCodificado);
             initArtistView(nombreArtista);
         }
+        else if (currentHash === '#compare') {
+            initCompareView();
+        }
     }
 
     window.addEventListener('hashchange', () => {

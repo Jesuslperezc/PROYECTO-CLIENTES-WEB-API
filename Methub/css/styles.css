@@ -899,3 +899,54 @@ loading-state {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+
+/* ERROR */
+error-state {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: block;
+}
+
+.error-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3rem 1.5rem;
+    background-color: #1a1a1a;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 450px;
+    margin: 2rem auto;
+    box-sizing: border-box;
+}
+
+.error-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-text {
+    color: #cccccc;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 1.5rem 0;
+}
+
+.btn-retry {
+    background-color: #e60000;
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-retry:hover {
+    background-color: #b30000;
+}

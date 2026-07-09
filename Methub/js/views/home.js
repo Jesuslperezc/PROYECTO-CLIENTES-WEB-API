@@ -111,7 +111,15 @@ async function cargarVistaHome() {
 
     } catch (error) {
         console.error("Error crítico en la carga del Home:", error);
-        statsContainer.textContent = "Error al cargar estadísticas.";
-        gridDestacados.textContent = "Hubo un problema de red al conectar con el Met. Por favor, reintenta.";
+        
+        statsContainer.textContent = "";
+        gridDestacados.textContent = "";
+        const moduloError = document.createElement('error-state');
+
+        moduloError.render(
+            "Hubo un problema al conectar con el Met. Por favor, verifica tu conexión.",
+            () => { cargarVistaHome(); }
+        );
+        gridDestacados.appendChild(moduloError);
     }
 }

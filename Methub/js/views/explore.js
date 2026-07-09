@@ -38,6 +38,10 @@ async function ejecutarFiltradoMet() {
     const soloDestacadas = document.getElementById('check-destacadas').checked;
     const soloImagenes = document.getElementById('check-imagenes').checked;
 
+    // REQUERIMIENTO COMPLETADO: Captura de rango de años desde el HTML
+    const anioInicio = document.getElementById('date-begin')?.value.trim();
+    const anioFin = document.getElementById('date-end')?.value.trim();
+
     const grid = document.getElementById('grid-explorar');
     const panelAgregados = document.getElementById('panel-agregados');
     
@@ -48,6 +52,10 @@ async function ejecutarFiltradoMet() {
     if (deptId) url += `&departmentId=${deptId}`;
     if (soloDestacadas) url += `&isHighlight=true`;
     if (soloImagenes) url += `&hasImages=true`;
+    
+    // Concatenamos al fetch los parámetros oficiales del Met si el usuario colocó datos
+    if (anioInicio) url += `&dateBegin=${encodeURIComponent(anioInicio)}`;
+    if (anioFin) url += `&dateEnd=${encodeURIComponent(anioFin)}`;
 
     try {
         const res = await fetch(url);
@@ -74,11 +82,11 @@ async function ejecutarFiltradoMet() {
         
         const bTotal = document.createElement('span');
         bTotal.className = 'badge';
-        bTotal.textContent = `Total Encontrado: ${data.total} obras`;
+        bTotal.textContent = `Coincidencias en bruto: ${data.total}`;
 
         const bVisual = document.createElement('span');
         bVisual.className = 'badge visual';
-        bVisual.textContent = `Página 1 de ${Math.ceil(data.total / exploreState.itemsPerPage)}`;
+        bVisual.textContent = `Lote de exploración: 1`;
 
         panelAgregados.appendChild(bTotal);
         panelAgregados.appendChild(bVisual);
@@ -88,17 +96,22 @@ async function ejecutarFiltradoMet() {
     } catch (err) {
         console.error("Error:", err);
         grid.innerHTML = "";
-        const errMsg = document.createElement('p');
-        errMsg.textContent = 'Hubo un problema al conectar con la API de exploración.';
-        grid.appendChild(errMsg);
-    }
+        const moduloError = document.createElement('error-state');
+
+        moduloError.render(
+            "Hubo un problema al conectar con el Met. Por favor, verifica tu conexión.",
+            () => { initExplorer(); }
+        );
+        grid.appendChild(moduloError);
 }
 
 async function renderizarPaginaExplore() {
     const grid = document.getElementById('grid-explorar');
     grid.innerHTML = "<div class='loading-skeleton'>Extrayendo metadatos...</div>";
 
-    // Modificamos para usar un puntero dinámico que asegure 12 tarjetas reales con imagen por página
+    const filtroAnioInicio = parseInt(document.getElementById('date-begin')?.value.trim(), 10);
+    const filtroAnioFin = parseInt(document.getElementById('date-end')?.value.trim(), 10);
+
     let obrasValidas = [];
     let puntero = exploreState.currentPage * exploreState.itemsPerPage;
 
@@ -116,8 +129,17 @@ async function renderizarPaginaExplore() {
         resultados.forEach(item => {
             if (item.status === 'fulfilled' && item.value) {
                 const obra = item.value;
-                // Exigimos título e imagen para mantener limpia la cuadrícula
+                
                 if (!obra.title || !obra.primaryImageSmall) return;
+                if (!isNaN(filtroAnioInicio) && !isNaN(filtroAnioFin)) {
+                    if (obra.objectBeginDate > filtroAnioFin || obra.objectEndDate < filtroAnioInicio) {
+                        return; 
+                    }
+                } else if (!isNaN(filtroAnioInicio) && obra.objectEndDate < filtroAnioInicio) {
+                    return;
+                } else if (!isNaN(filtroAnioFin) && obra.objectBeginDate > filtroAnioFin) {
+                    return;
+                }
 
                 if (obrasValidas.length < exploreState.itemsPerPage) {
                     obrasValidas.push(obra);
@@ -162,7 +184,7 @@ async function renderizarPaginaExplore() {
             artistLink.style.color = '#4f46e5';
             artistLink.style.textDecoration = 'underline';
             artistLink.style.cursor = 'pointer';
-            artistLink.textContent = obra.artistDisplayName; // 100% libre de XSS
+            artistLink.textContent = obra.artistDisplayName;
             artistLink.addEventListener('click', (e) => {
                 e.stopPropagation(); 
                 window.location.hash = `#artist/${encodeURIComponent(obra.artistDisplayName)}`;
@@ -183,13 +205,12 @@ async function renderizarPaginaExplore() {
 
     renderizarControlesPaginacion(puntero >= exploreState.objectIDs.length);
 }
-
 function renderizarControlesPaginacion(esFinDeColeccion) {
     const container = document.getElementById('paginacion-controls');
     container.innerHTML = "";
 
-    const totalPaginas = Math.ceil(exploreState.objectIDs.length / exploreState.itemsPerPage);
-    if (totalPaginas <= 1) return;
+    // Si estamos en la primera tanda y ya no quedan IDs por evaluar en la API, ocultamos controles
+    if (exploreState.currentPage === 0 && esFinDeColeccion) return;
 
     const btnAnt = document.createElement('button');
     btnAnt.textContent = "◀ Anterior";
@@ -200,7 +221,7 @@ function renderizarControlesPaginacion(esFinDeColeccion) {
     btnAnt.disabled = exploreState.currentPage === 0;
     btnAnt.addEventListener('click', () => {
         exploreState.currentPage--;
-        actualizarBadgesMétricas(totalPaginas);
+        actualizarBadgesMétricas();
         renderizarPaginaExplore();
     });
 
@@ -210,29 +231,33 @@ function renderizarControlesPaginacion(esFinDeColeccion) {
     btnSig.style.padding = "8px 16px";
     btnSig.style.margin = "0 5px";
     btnSig.style.cursor = "pointer";
-    btnSig.disabled = esFinDeColeccion || (exploreState.currentPage >= totalPaginas - 1);
+    btnSig.disabled = esFinDeColeccion;
     btnSig.addEventListener('click', () => {
         exploreState.currentPage++;
-        actualizarBadgesMétricas(totalPaginas);
+        actualizarBadgesMétricas();
         renderizarPaginaExplore();
     });
 
     container.appendChild(btnAnt);
     container.appendChild(btnSig);
 }
+}
 
-function actualizarBadgesMétricas(totalPaginas) {
+function actualizarBadgesMétricas() {
     const badges = document.querySelectorAll('#panel-agregados .badge.visual');
     if(badges.length > 0) {
-        badges[0].textContent = `Página ${exploreState.currentPage + 1} de ${totalPaginas}`;
+        badges[0].textContent = `Lote de exploración: ${exploreState.currentPage + 1}`;
     }
 }
 
 function limpiarFiltrosExplore() {
-    document.getElementById('search-input').value = "";
-    document.getElementById('select-departamento').value = "";
-    document.getElementById('check-destacadas').checked = false;
-    document.getElementById('check-imagenes').checked = true;
+    if(document.getElementById('search-input')) document.getElementById('search-input').value = "";
+    if(document.getElementById('select-departamento')) document.getElementById('select-departamento').value = "";
+    if(document.getElementById('check-destacadas')) document.getElementById('check-destacadas').checked = false;
+    if(document.getElementById('check-imagenes')) document.getElementById('check-imagenes').checked = true;
+    if(document.getElementById('date-begin')) document.getElementById('date-begin').value = "";
+    if(document.getElementById('date-end')) document.getElementById('date-end').value = "";
+    
     document.getElementById('grid-explorar').innerHTML = "";
     document.getElementById('panel-agregados').innerHTML = "";
     document.getElementById('paginacion-controls').innerHTML = "";

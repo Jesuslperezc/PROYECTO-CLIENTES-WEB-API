@@ -42,7 +42,7 @@ async function ejecutarFiltradoMet() {
     const panelAgregados = document.getElementById('panel-agregados');
     
     grid.innerHTML = "<div class='loading-skeleton'>Buscando en los archivos del Met...</div>";
-    panelAgregados.innerHTML = "";
+    panelAgregados.innerHTML = ""; 
 
     let url = `${API_BASE}/search?q=${encodeURIComponent(query)}`;
     if (deptId) url += `&departmentId=${deptId}`;
@@ -54,25 +54,43 @@ async function ejecutarFiltradoMet() {
         const data = await res.json();
 
         if (!data.objectIDs || data.objectIDs.length === 0) {
-            grid.innerHTML = "<p class='no-results'>No se encontraron obras con esos filtros.</p>";
+            grid.innerHTML = "";
+            const noRes = document.createElement('p');
+            noRes.className = 'no-results';
+            noRes.textContent = 'No se encontraron obras con esos filtros.';
+            grid.appendChild(noRes);
+
             document.getElementById('paginacion-controls').innerHTML = "";
-            panelAgregados.innerHTML = "<span class='badge'>0 resultados</span>";
+            
+            const bZero = document.createElement('span');
+            bZero.className = 'badge';
+            bZero.textContent = '0 resultados';
+            panelAgregados.appendChild(bZero);
             return;
         }
 
         exploreState.objectIDs = data.objectIDs;
         exploreState.currentPage = 0;
         
-        panelAgregados.innerHTML = `
-            <span class="badge">Total Encontrado: ${data.total} obras</span>
-            <span class="badge visual">Página 1 de ${Math.ceil(data.total / exploreState.itemsPerPage)}</span>
-        `;
+        const bTotal = document.createElement('span');
+        bTotal.className = 'badge';
+        bTotal.textContent = `Total Encontrado: ${data.total} obras`;
+
+        const bVisual = document.createElement('span');
+        bVisual.className = 'badge visual';
+        bVisual.textContent = `Página 1 de ${Math.ceil(data.total / exploreState.itemsPerPage)}`;
+
+        panelAgregados.appendChild(bTotal);
+        panelAgregados.appendChild(bVisual);
 
         await renderizarPaginaExplore();
 
     } catch (err) {
         console.error("Error:", err);
-        grid.innerHTML = "<p>Hubo un problema al conectar con la API de exploración.</p>";
+        grid.innerHTML = "";
+        const errMsg = document.createElement('p');
+        errMsg.textContent = 'Hubo un problema al conectar con la API de exploración.';
+        grid.appendChild(errMsg);
     }
 }
 
@@ -80,58 +98,93 @@ async function renderizarPaginaExplore() {
     const grid = document.getElementById('grid-explorar');
     grid.innerHTML = "<div class='loading-skeleton'>Extrayendo metadatos...</div>";
 
-    const inicio = exploreState.currentPage * exploreState.itemsPerPage;
-    const fin = inicio + exploreState.itemsPerPage;
-    const bloqueIds = exploreState.objectIDs.slice(inicio, fin);
+    // Modificamos para usar un puntero dinámico que asegure 12 tarjetas reales con imagen por página
+    let obrasValidas = [];
+    let puntero = exploreState.currentPage * exploreState.itemsPerPage;
 
-    const promesas = bloqueIds.map(id =>
-        fetch(`${API_BASE}/objects/${id}`).then(r => r.ok ? r.json() : null)
-    );
+    while (obrasValidas.length < exploreState.itemsPerPage && puntero < exploreState.objectIDs.length) {
+        const limiteLote = Math.min(puntero + exploreState.itemsPerPage, exploreState.objectIDs.length);
+        const subBloqueIds = exploreState.objectIDs.slice(puntero, limiteLote);
+        puntero = limiteLote;
 
-    const resultados = await Promise.allSettled(promesas);
+        const promesas = subBloqueIds.map(id =>
+            fetch(`${API_BASE}/objects/${id}`).then(r => r.ok ? r.json() : null)
+        );
+
+        const resultados = await Promise.allSettled(promesas);
+
+        resultados.forEach(item => {
+            if (item.status === 'fulfilled' && item.value) {
+                const obra = item.value;
+                // Exigimos título e imagen para mantener limpia la cuadrícula
+                if (!obra.title || !obra.primaryImageSmall) return;
+
+                if (obrasValidas.length < exploreState.itemsPerPage) {
+                    obrasValidas.push(obra);
+                }
+            }
+        });
+    }
+
     grid.innerHTML = "";
 
-    resultados.forEach(item => {
-        if (item.status === 'fulfilled' && item.value) {
-            const obra = item.value;
-            
-            if (!obra.title || !obra.primaryImageSmall) return;
+    if (obrasValidas.length === 0) {
+        const noWorks = document.createElement('p');
+        noWorks.className = 'no-results';
+        noWorks.textContent = 'No hay más imágenes disponibles en este bloque.';
+        grid.appendChild(noWorks);
+        return;
+    }
 
-            const card = document.createElement('article');
-            card.className = 'obra-card';
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', () => {
-                window.location.hash = `#detail/${obra.objectID}`;
+    obrasValidas.forEach(obra => {
+        const card = document.createElement('article');
+        card.className = 'obra-card';
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+            window.location.hash = `#detail/${obra.objectID}`;
+        });
+
+        const img = document.createElement('img');
+        img.src = obra.primaryImageSmall || 'assets/placeholder-no-image.png';
+        img.alt = obra.title || 'Sin título';
+        img.onerror = () => img.src = 'assets/placeholder-no-image.png';
+        card.appendChild(img);
+
+        const title = document.createElement('h4');
+        title.textContent = obra.title || 'Sin título';
+        card.appendChild(title);
+
+        const artist = document.createElement('p');
+        artist.className = 'artist-text';
+        if (obra.artistDisplayName) {
+            const artistLink = document.createElement('span');
+            artistLink.className = 'artist-link';
+            artistLink.style.color = '#4f46e5';
+            artistLink.style.textDecoration = 'underline';
+            artistLink.style.cursor = 'pointer';
+            artistLink.textContent = obra.artistDisplayName; // 100% libre de XSS
+            artistLink.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                window.location.hash = `#artist/${encodeURIComponent(obra.artistDisplayName)}`;
             });
-
-            const img = document.createElement('img');
-            img.src = obra.primaryImageSmall || 'assets/placeholder-no-image.png';
-            img.alt = obra.title || 'Sin título';
-            img.onerror = () => img.src = 'assets/placeholder-no-image.png';
-            card.appendChild(img);
-
-            const title = document.createElement('h4');
-            title.textContent = obra.title || 'Sin título';
-            card.appendChild(title);
-
-            const artist = document.createElement('p');
-            artist.className = 'artist-text';
-            artist.textContent = obra.artistDisplayName || 'Artista Desconocido';
-            card.appendChild(artist);
-
-            const infoExtra = document.createElement('p');
-            infoExtra.className = 'info-extra';
-            infoExtra.textContent = `${obra.objectDate || 'S.F.'} | ${obra.department || 'General'}`;
-            card.appendChild(infoExtra);
-
-            grid.appendChild(card);
+            artist.appendChild(artistLink);
+        } else {
+            artist.textContent = 'Artista Desconocido';
         }
+        card.appendChild(artist);
+
+        const infoExtra = document.createElement('p');
+        infoExtra.className = 'info-extra';
+        infoExtra.textContent = `${obra.objectDate || 'S.F.'} | ${obra.department || 'General'}`;
+        card.appendChild(infoExtra);
+
+        grid.appendChild(card);
     });
 
-    renderizarControlesPaginacion();
+    renderizarControlesPaginacion(puntero >= exploreState.objectIDs.length);
 }
 
-function renderizarControlesPaginacion() {
+function renderizarControlesPaginacion(esFinDeColeccion) {
     const container = document.getElementById('paginacion-controls');
     container.innerHTML = "";
 
@@ -140,6 +193,10 @@ function renderizarControlesPaginacion() {
 
     const btnAnt = document.createElement('button');
     btnAnt.textContent = "◀ Anterior";
+    btnAnt.className = "btn-back"; 
+    btnAnt.style.padding = "8px 16px";
+    btnAnt.style.margin = "0 5px";
+    btnAnt.style.cursor = "pointer";
     btnAnt.disabled = exploreState.currentPage === 0;
     btnAnt.addEventListener('click', () => {
         exploreState.currentPage--;
@@ -149,7 +206,11 @@ function renderizarControlesPaginacion() {
 
     const btnSig = document.createElement('button');
     btnSig.textContent = "Siguiente ▶";
-    btnSig.disabled = exploreState.currentPage >= totalPaginas - 1;
+    btnSig.className = "btn-back";
+    btnSig.style.padding = "8px 16px";
+    btnSig.style.margin = "0 5px";
+    btnSig.style.cursor = "pointer";
+    btnSig.disabled = esFinDeColeccion || (exploreState.currentPage >= totalPaginas - 1);
     btnSig.addEventListener('click', () => {
         exploreState.currentPage++;
         actualizarBadgesMétricas(totalPaginas);

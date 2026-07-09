@@ -29,9 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentHash === '#home') idVista = 'V-01';
         else if (currentHash === '#explore') idVista = 'V-02';
         else if (currentHash === '#departments') idVista = 'V-04';
+        else if (currentHash.startsWith('#artist/')) idVista = 'V-05';
         else if (currentHash === '#compare') idVista = 'V-06';
 
-        if (ultimaVistaActiva === idVista) {
+        if (ultimaVistaActiva === idVista && !currentHash.startsWith('#artist/')) {
             return;
         }
 
@@ -50,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
             initExplorer(); 
         } else if (currentHash === '#departments') {
             initDepartments();
+        } else if (currentHash.startsWith('#artist/')) {
+            const artistaCodificado = currentHash.split('/')[1];
+            const nombreArtista = decodeURIComponent(artistaCodificado);
+            initArtistView(nombreArtista);
         }
     }
 

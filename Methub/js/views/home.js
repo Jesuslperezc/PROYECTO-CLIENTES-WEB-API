@@ -94,7 +94,15 @@ async function cargarVistaHome() {
 
                 const artist = document.createElement('p');
                 artist.className = 'artist-text';
-                artist.textContent = obra.artistDisplayName || 'Artista Desconocido';
+                if (obra.artistDisplayName) {
+                    artist.innerHTML = `<span class="artist-link" style="color: #4f46e5; text-decoration: underline; cursor: pointer;">${obra.artistDisplayName}</span>`;
+                    artist.querySelector('.artist-link').addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                        window.location.hash = `#artist/${encodeURIComponent(obra.artistDisplayName)}`;
+                    });
+                } else {
+                    artist.textContent = 'Artista Desconocido';
+                }
                 card.appendChild(artist);
 
              

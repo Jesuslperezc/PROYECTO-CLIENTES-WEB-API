@@ -3,13 +3,21 @@ function abrirModalDetalle(id) {
 
     const modal = document.createElement('div');
     modal.id = 'modal-detail';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div id="modal-body">Cargando detalles...</div>
-        </div>
-    `;
 
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    const closeModal = document.createElement('span');
+    closeModal.className = 'close-modal';
+    closeModal.textContent = 'x';
+
+    const modalBody = document.createElement('div');
+    modalBody.id = 'modal-body';
+    modalBody.textContent = 'Cargando detalles...';
+
+    modalContent.appendChild(closeModal);
+    modalContent.appendChild(modalBody);
+    modal.appendChild(modalContent);
     document.body.appendChild(modal);
     
     const cerrarYRegresar = () => {
@@ -19,23 +27,58 @@ function abrirModalDetalle(id) {
         }
     };
 
-    modal.querySelector('.close-modal').addEventListener('click', cerrarYRegresar);
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) cerrarYRegresar();
+    closeModal.addEventListener('click', cerrarYRegresar);
+    modal.addEventListener('click', (e) => { 
+        if (e.target === modal) cerrarYRegresar(); 
     });
 
     fetch(`${API_BASE}/objects/${id}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Obra no encontrada');
+            return res.json();
+        })
         .then(obra => {
-            document.getElementById('modal-body').innerHTML = `
-                <h2>${obra.title || 'Sin Título'}</h2>
-                <img src="${obra.primaryImage || 'assets/placeholder-no-image.png'}" style="width:100%">
-                <p><strong>Artista:</strong> ${obra.artistDisplayName || 'Desconocido'}</p>
-                <p><strong>Fecha:</strong> ${obra.objectDate || 'S.F.'}</p>
-            `;
+            modalBody.textContent = "";
+
+            const title = document.createElement('h2');
+            title.textContent = obra.title || 'Sin Título';
+
+            const img = document.createElement('img');
+            img.src = obra.primaryImage || 'assets/placeholder-no-image.png';
+            img.style.width = '100%';
+
+            const artistP = document.createElement('p');
+            const artistStrong = document.createElement('strong');
+            artistStrong.textContent = 'Artista: ';
+            artistP.appendChild(artistStrong);
+
+            if (obra.artistDisplayName) {
+                const aLink = document.createElement('span');
+                aLink.style.color = '#4f46e5';
+                aLink.style.textDecoration = 'underline';
+                aLink.style.cursor = 'pointer';
+                aLink.textContent = obra.artistDisplayName;
+                aLink.addEventListener('click', () => {
+                    window.location.hash = `#artist/${encodeURIComponent(obra.artistDisplayName)}`;
+                });
+                artistP.appendChild(aLink);
+            } else {
+                artistP.appendChild(document.createTextNode('Desconocido'));
+            }
+
+            const dateP = document.createElement('p');
+            const dateStrong = document.createElement('strong');
+            dateStrong.textContent = 'Fecha: ';
+            dateP.appendChild(dateStrong);
+            dateP.appendChild(document.createTextNode(obra.objectDate || 'S.F.'));
+
+            modalBody.appendChild(title);
+            modalBody.appendChild(img);
+            modalBody.appendChild(artistP);
+            modalBody.appendChild(dateP);
         })
         .catch(err => {
             console.error("Error:", err);
-            document.getElementById('modal-body').innerHTML = "<p>No se pudieron cargar los detalles de la obra.</p>";
+            modalBody.textContent = "No se pudieron cargar los detalles de esta obra.";
         });
 }

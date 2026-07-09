@@ -54,7 +54,27 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentHash.startsWith('#artist/')) {
             const artistaCodificado = currentHash.split('/')[1];
             const nombreArtista = decodeURIComponent(artistaCodificado);
-            initArtistView(nombreArtista);
+            
+            // ✅ CORRECCIÓN: Usar window.initArtistView
+            if (typeof window.initArtistView === 'function') {
+                console.log('🎨 Inicializando vista de artista:', nombreArtista);
+                window.initArtistView(nombreArtista);
+            } else {
+                console.error('❌ Error: initArtistView no está definida en window');
+                // Mostrar mensaje de error en la vista
+                const grid = document.getElementById('grid-artista');
+                if (grid) {
+                    grid.innerHTML = `
+                        <div style="padding: 20px; text-align: center; color: #d32f2f;">
+                            <p>❌ Error al cargar la vista del artista</p>
+                            <p style="font-size: 14px; color: #666;">La función initArtistView no está disponible.</p>
+                            <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; cursor: pointer;">
+                                🔄 Recargar página
+                            </button>
+                        </div>
+                    `;
+                }
+            }
         }
         else if (currentHash === '#compare') {
             initCompareView();

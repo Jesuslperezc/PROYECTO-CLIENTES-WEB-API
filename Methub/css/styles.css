@@ -12,60 +12,168 @@ body {
 .d-none {
     display: none !important;
 }
+/* Contenedor Principal en la esquina inferior derecha */
 #metsy-container {
     position: fixed;
-    bottom: 10px; /* Lo pegamos un pelo más abajo para compensar el tamaño */
-    right: 10px;
+    bottom: 10px; 
+    right: 25px;
+    z-index: 10000;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    z-index: 9999;
-    font-family: 'Courier New', Courier, monospace;
-    pointer-events: none; /* Clave: el contenedor invisible no estorba */
+    /* Tipografía alineada al estilo limpio del portal */
+    font-family: 'Times New Roman', Times, serif; 
 }
 
+/* Caja de Chat - Adaptada a la paleta MetHub */
+#metsy-chat-box {
+    width: 400px; 
+    max-height: 520px; 
+    background: #fdfbf7; /* Tono crema/hueso a juego con el fondo general */
+    border-radius: 12px; /* Esquinas un poco más sobrias y clásicas */
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e2ded5; /* Borde suave desaturado */
+    margin-bottom: 10px; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: bottom right;
+}
+
+/* Estados de animación para la ventana */
+.metsy-oculto {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    pointer-events: none;
+}
+
+.metsy-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+}
+
+/* Encabezado del Chat - Inspirado en el Footer oscuro */
+.metsy-header {
+    background: #111111; /* Carbón oscuro idéntico al footer */
+    color: #ffffff;
+    padding: 16px 20px; 
+    font-size: 16px; 
+    font-weight: 500;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 2px solid #c4a46a; /* Delicada línea dorada de acento */
+}
+
+.metsy-status-dot {
+    width: 9px; 
+    height: 9px;
+    background: #c4a46a; /* Punto dorado de estado, más elegante que el verde chillón */
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 6px #c4a46a;
+}
+
+/* Cuerpo interno con Scroll */
+#metsy-body {
+    padding: 20px; 
+    height: 100%; 
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+    background: #f7f4ee; /* El mismo fondo almendrado de las tarjetas */
+    font-family: system-ui, -apple-system, sans-serif; /* Texto plano legible */
+}
+
+/* Burbuja de Texto de Metsy */
 #metsy-bubble {
-    background: #fff;
-    color: #000;
-    border: 3px solid #000;
-    padding: 14px;
-    border-radius: 12px;
-    max-width: 250px; /* Un pelo más ancho para que balancee con el Metsy gigante */
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-bottom: -10px; /* Margen negativo para que el globo flote justo encima del orbe */
-    position: relative;
-    box-shadow: 5px 5px 0px #000;
-    pointer-events: auto; 
+    font-size: 15px; 
+    color: #2c2a27; /* Texto oscuro pero suave */
+    line-height: 1.6; 
+    background: #ffffff; /* Blanco limpio como el cuerpo de tus tarjetas */
+    padding: 16px; 
+    border-radius: 8px;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #eae6dc;
+    transition: opacity 0.15s ease-in-out;
 }
 
-#metsy-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    right: 50px; /* Centrado respecto al avatar grande */
-    border-width: 12px 12px 0;
-    border-style: solid;
-    border-color: #000 transparent;
-    display: block;
-    width: 0;
+/* Contenedor de Opciones abajo */
+#metsy-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    margin-top: auto; 
+}
+
+/* Botones con la línea de Oro Viejo del menú de navegación */
+.btn-metsy-opcion {
+    background: #ffffff;
+    color: #111111;
+    border: 1px solid #c4a46a; /* Borde oro clásico */
+    border-radius: 6px;
+    padding: 12px 16px; 
+    text-align: left;
+    font-size: 14px; 
+    font-weight: 500;
+    font-family: 'Times New Roman', Times, serif; /* Toque editorial */
+    cursor: pointer;
+    transition: all 0.25s ease;
+    opacity: 0;
+    animation: metsyFadeIn 0.3s forwards ease-out;
+}
+
+/* Hover de alta costura */
+.btn-metsy-opcion:hover {
+    background: #c4a46a; /* Fondo oro al pasar el mouse */
+    color: #ffffff;
+    transform: translateX(6px); 
+    box-shadow: 0 4px 12px rgba(196, 164, 106, 0.2);
+}
+
+.btn-metsy-opcion:active {
+    transform: scale(0.98);
+}
+
+/* --- CONTROL DEL AVATAR GIGANTE --- */
+.metsy-avatar-wrapper {
+    position: relative;
+    cursor: pointer;
+    margin-right: 10px; 
 }
 
 #metsy-avatar {
-    width: 280px; /* ¡Ahora sí está gigante y vistoso! */
-    height: 280px;
-    cursor: pointer;
-    object-fit: cover;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animación tipo pop-out más agresiva */
-    pointer-events: auto;
-    
-    /* Cortamos el hitbox matemático para que solo la esfera sea clickeable */
-    border-radius: 50%;
-    clip-path: circle(42% at 50% 50%); /* Ajustamos el radio al 42% para ceñir el corte al borde real del orbe */
+    width: 120px;       
+    height: 120px;      
+    object-fit: contain;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.12));
 }
 
 #metsy-avatar:hover {
-    transform: scale(1.05); /* Un sutil escalado para que mantenga el drip sin salirse de la pantalla */
+    transform: scale(1.12) rotate(4deg); 
+}
+
+.avatar-activo {
+    transform: scale(1.06);
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.18));
+}
+
+/* Animaciones */
+@keyframes metsyFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 /* Contenedor general de las estadísticas */
 #stats-container {

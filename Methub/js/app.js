@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateActiveNavLink(currentHash);
-        actualizarMensajeMetsy(currentHash);
 
         if (currentHash.startsWith('#detail/')) {
             const id = currentHash.split('/')[1];

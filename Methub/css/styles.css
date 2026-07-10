@@ -1227,10 +1227,10 @@ font-family: 'Cinzel', Georgia, serif;
 
 /* Footer */
 #main-footer {
-    background-color: #111111;
+    background-color: #704c0c;
     padding: 1.5rem 1rem;
     text-align: center;
-    border-top: 1px solid #222222;
+    border-top: 2px solid #8C7B5B;
     margin-top: 4rem;
 }
 
@@ -1244,18 +1244,20 @@ font-family: 'Cinzel', Georgia, serif;
 /* Cambio de color al pasar el mouse */
 .footer-clickable-box:hover .footer-credits,
 .footer-clickable-box:hover .api-disclaimer {
-    color: #ffffff; 
+    color: #e4cd99; 
 }
 
 .footer-credits {
-    color: #aaaaaa;
+    color: #daceae;
+    font-family: 'Cinzel', Georgia, serif;
     font-size: 0.95rem;
     font-weight: 500;
-    margin: 0 0 0.4rem 0; 
+    margin: 0 0 0.4rem 0;
 }
 
 .api-disclaimer {
-    color: #aaaaaa;
+    color: #daceae;
+    font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     margin: 0;
 }
@@ -1266,7 +1268,7 @@ font-family: 'Cinzel', Georgia, serif;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(27, 26, 24, 0.85);
     backdrop-filter: blur(8px);
     display: flex !important;
     justify-content: center !important;
@@ -1276,12 +1278,12 @@ font-family: 'Cinzel', Georgia, serif;
 }
 
 .endscreen-content {
-    background-color: #1a1a1a;
-    color: #ffffff;
+    background-color: #FDFBF7;
+    color: #362305;
     padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-    border: 1px solid #333333;
+    border-radius: 6px;
+    box-shadow: 0 20px 50px rgba(90, 62, 9, 0.15);
+    border: 1px solid #8C7B5B;
     width: 90%;
     max-width: 500px; 
     box-sizing: border-box;
@@ -1291,15 +1293,16 @@ font-family: 'Cinzel', Georgia, serif;
 }
 
 .endscreen-content h2 {
+    font-family: 'Cinzel', Georgia, serif;
     margin-top: 0;
     font-size: 1.6rem;
-    font-weight: bold;
+    font-weight: 700;
     letter-spacing: 0.5px;
 }
 
 .endscreen-divider {
     border: 0;
-    border-top: 2px solid #e60000;
+    border-top: 2px solid #8C7B5B;
     margin: 1rem 0 1.5rem 0;
 }
 
@@ -1308,13 +1311,15 @@ font-family: 'Cinzel', Georgia, serif;
 }
 
 .endscreen-section h3 {
-    color: #e60000;
+    font-family: 'Cinzel', Georgia, serif;
+    color: #8C7B5B;
     font-size: 1.1rem;
     margin: 0 0 0.5rem 0;
 }
 
 .endscreen-section p {
-    color: #cccccc;
+    font-family: 'Inter', sans-serif;
+    color: #6B6660;
     font-size: 0.95rem;
     line-height: 1.5;
     margin: 0 0 0.5rem 0;
@@ -1326,7 +1331,7 @@ font-family: 'Cinzel', Georgia, serif;
     right: 1.2rem;
     background: none;
     border: none;
-    color: #888888;
+    color: #8C7B5B;
     font-size: 2.2rem;
     cursor: pointer;
     line-height: 1;
@@ -1334,7 +1339,7 @@ font-family: 'Cinzel', Georgia, serif;
 }
 
 .endscreen-close:hover {
-    color: #e60000;
+    color: #D4AF37;
 }
 
 @keyframes fadeInOverlay {
@@ -1370,8 +1375,8 @@ loading-state {
 .loading-spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid #222222;
-    border-top: 5px solid #e60000;
+    border: 5px solid #E2DED5;
+    border-top: 5px solid #8C7B5B;
     border-radius: 50%;
     display: block !important;
     animation: spin 1s linear infinite;
@@ -1379,10 +1384,11 @@ loading-state {
 }
 
 .loading-text {
-    color: #ffffff; 
+    color: #8C7B5B; 
     font-size: 1.1rem;
-    font-weight: bold;
-    font-family: sans-serif;
+    font-weight: 600;
+    font-family: 'Cinzel', Georgia, serif;
+    letter-spacing: 1px;
 }
 
 @keyframes spin {
@@ -1404,44 +1410,50 @@ error-state {
     align-items: center !important;
     justify-content: center !important;
     padding: 3rem 1.5rem;
-    background-color: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 8px;
+    background-color: #FDFBF7;
+    border: 1px solid #8C7B5B;
+    border-radius: 6px;
     text-align: center;
     max-width: 450px;
     margin: 2rem auto;
     box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(140, 123, 91, 0.05);
 }
 
 .error-icon {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
+    filter: sepia(0.3);
 }
 
 .error-text {
-    color: #cccccc;
+    font-family: 'Inter', sans-serif;
+    color: #6B6660;
     font-size: 0.95rem;
     line-height: 1.5;
     margin: 0 0 1.5rem 0;
 }
 
 .btn-retry {
-    background-color: #e60000;
-    color: #ffffff;
-    border: none;
+    background-color: #fef3cf;
+    color: #422a06;
+    border: 1px solid #715116;
     padding: 0.6rem 1.5rem;
+    font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 .btn-retry:hover {
-    background-color: #b30000;
+    background-color: #8f6f34;
+    color: #FFFFFF;
 }
 
-/* Tarjetas compactas en pantallas muy angostas */
 @media (max-width: 480px) {
     #grid-explorar {
         grid-template-columns: 1fr;
@@ -1449,7 +1461,7 @@ error-state {
     }
 
     .obra-card img {
-        height: 160px; /* en vez de 300px fijo */
+        height: 160px;
     }
 
     .obra-card h4 {
@@ -1468,6 +1480,7 @@ error-state {
         font-size: 0.85rem;
     }
 }
+
 /* ==========================================================================
    V-01: HERO SECTION - ESTILO EDITORIAL MET
    ========================================================================== */

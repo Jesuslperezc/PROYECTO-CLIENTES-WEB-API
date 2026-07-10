@@ -676,6 +676,62 @@ body {
     animation: pulse 1.5s infinite ease-in-out;
 }
 
+.compare-table-data {
+    width: 100%;
+    margin-top: 30px;
+    border-collapse: collapse;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border-radius: 8px;
+    overflow: hidden; /* Mantiene los bordes redondeados limpios */
+}
+
+/* Encabezados de la tabla */
+.compare-table-data th {
+    background-color: #f7f4ee; /* Fondo crema suave texturizado */
+    color: #111111;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 14px;
+    border-bottom: 2px solid #eae6dc;
+    text-align: left;
+}
+
+/* Forzar anchos proporcionales en las columnas */
+.compare-table-data th:nth-child(1), 
+.compare-table-data td:nth-child(1) {
+    width: 20%;
+    background-color: #fdfbf7; /* Columna de etiquetas fija */
+}
+
+.compare-table-data th:nth-child(2), 
+.compare-table-data td:nth-child(2),
+.compare-table-data th:nth-child(3), 
+.compare-table-data td:nth-child(3) {
+    width: 40%; /* Distribución simétrica perfecta */
+}
+
+/* Celdas de datos */
+.compare-table-data td {
+    padding: 12px 14px;
+    color: #333333;
+    line-height: 1.5;
+    vertical-align: top; /* Si el texto es largo, empieza desde arriba de la celda */
+    border-bottom: 1px solid #eae6dc; /* Línea divisoria sutil */
+}
+
+/* Resaltado elegante de diferencias */
+.compare-table-data tr.fila-diferencia {
+    background-color: #fcf9f2 !important; /* Un tono oro/crema sumamente sutil */
+}
+
+.compare-table-data tr.fila-diferencia td:nth-child(1) {
+    border-left: 4px solid #c4a46a; /* Barra dorada de acento en la característica diferente */
+}
+
 @keyframes pulse {
     0%, 100% { opacity: 0.6; }
     50% { opacity: 1; }

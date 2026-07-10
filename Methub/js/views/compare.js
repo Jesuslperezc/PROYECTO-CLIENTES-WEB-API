@@ -44,7 +44,7 @@ async function crearPlaceholderPanel(letra) {
     const favoritosIds = obtenerFavoritos(); // Llamada a tu favoritos.js
 
     if (favoritosIds.length === 0) {
-   
+        // Estado alternativo si no tienen favoritos guardados aún
         const aviso = document.createElement('p');
         aviso.textContent = " No tienes obras guardadas en favoritos. Agrégalas desde el menú de detalles o explora la galería.";
         aviso.style.fontSize = '13px';
@@ -234,25 +234,35 @@ function verificarYRenderizarTablaComparativa() {
         { label: 'Línea de Crédito', key: 'creditLine', default: 'Colección Privada' }
     ];
 
-    camposAComparar.forEach(campo => {
+   camposAComparar.forEach(campo => {
         const tr = document.createElement('tr');
 
         const tdLabel = document.createElement('td');
         tdLabel.style.fontWeight = 'bold';
         tdLabel.textContent = campo.label;
 
+        // Obtenemos los valores limpios para contrastar
+        const valA = compareState.obraA[campo.key] || campo.default;
+        const valB = compareState.obraB[campo.key] || campo.default;
+
         const tdValA = document.createElement('td');
-        tdValA.textContent = compareState.obraA[campo.key] || campo.default;
+        tdValA.textContent = valA;
 
         const tdValB = document.createElement('td');
-        tdValB.textContent = compareState.obraB[campo.key] || campo.default;
+        tdValB.textContent = valB;
+
+
+        if (valA.toLowerCase().trim() !== valB.toLowerCase().trim()) {
+            tr.classList.add('fila-diferencia'); 
+            tr.title = "Diferencia detectada en este atributo técnico"
+        }
+        // =======================================================
 
         tr.appendChild(tdLabel);
         tr.appendChild(tdValA);
         tr.appendChild(tdValB);
         tbody.appendChild(tr);
     });
-
     table.appendChild(tbody);
     tableContainer.appendChild(table);
 }

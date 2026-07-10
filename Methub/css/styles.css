@@ -833,7 +833,31 @@ margin: 0;
     0%, 100% { opacity: 0.6; }
     50% { opacity: 1; }
 }
+/* Estilo elegante para el botón de regresar en el Museo */
+#btn-volver-artista {
+    background: #ffffff;
+    color: #111111;
+    border: 1px solid #eae6dc; /* Línea fina tono paspartú */
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.25s ease;
+    margin-bottom: 20px; /* Le da espacio respecto al header del artista */
+    display: inline-flex;
+    align-items: center;
+}
 
+#btn-volver-artista:hover {
+    background: #fdfbf7;
+    border-color: #c4a46a; /* Destaca en el oro viejo insignia */
+    color: #c4a46a;
+    transform: translateX(-3px); /* Micro-interacción interactiva de retroceso */
+}
 /* RESPONSIVO */
 @media (max-width: 768px) {
     .explore-layout {

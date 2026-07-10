@@ -3,6 +3,48 @@ body {
     overflow-x: hidden;
 }
 
+h2 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 2.3rem;
+    font-weight: 400;
+    color: #111111; /* Negro absoluto de catálogo */
+    letter-spacing: 0.5px;
+    margin-top: 45px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    position: relative;
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #eae6dc; /* Línea fina tono paspartú que cruza la pantalla */
+    box-sizing: border-box;
+}
+
+/* El toque de distinción: Una doble línea o acento en oro viejo */
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; /* Se superpone exactamente sobre el borde gris inferior */
+    left: 0;
+    width: 80px; /* Detalle corto de alta costura */
+    height: 3px; /* Un poco más gruesa para que resalte el oro */
+    background-color: #c4a46a; /* Oro viejo insignia */
+}
+
+/* ==========================================================================
+   RESPONSIVE - AJUSTE DE PANTALLA
+   ========================================================================== */
+@media (max-width: 768px) {
+    h2 {
+        font-size: 1.8rem;
+        margin-top: 35px;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+    }
+    h2::after {
+        width: 50px;
+    }
+}
+
 
 .d-none {
     display: none !important;
@@ -1407,5 +1449,90 @@ error-state {
     #paginacion-controls button {
         padding: 10px 16px;
         font-size: 0.85rem;
+    }
+}
+/* ==========================================================================
+   V-01: HERO SECTION - ESTILO EDITORIAL MET
+   ========================================================================== */
+#V-01 {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto 40px auto;
+    padding: 0 20px; /* Margen de seguridad para pantallas medianas */
+    box-sizing: border-box;
+}
+
+#hero {
+    width: 100%;
+    background-color: #fdfbf7; /* Fondo pergamino / mármol limpio */
+    border: 1px solid #eae6dc; /* Línea fina de contorno */
+    border-radius: 8px;
+    padding: 90px 50px;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* El paspartú interno: un fino recuadro dorado que enmarca el texto como una obra de arte */
+#hero::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    border: 1px solid rgba(196, 164, 106, 0.25); /* Oro viejo translúcido */
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+/* Título Monumental de la exhibición */
+#hero h1 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 3.8rem;
+    font-weight: bold;
+    color: #111111; /* Negro absoluto de catálogo impreso */
+    line-height: 1.15;
+    margin: 0 auto 28px auto;
+    max-width: 850px;
+    letter-spacing: -0.5px;
+}
+
+/* Texto de descripción de la colección */
+#descripcion-hero {
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic; /* Toque editorial clásico */
+    font-size: 1.3rem;
+    color: #6e6450; /* Gris piedra cálido */
+    line-height: 1.7;
+    max-width: 720px;
+    margin: 0 auto;
+    letter-spacing: 0.2px;
+}
+
+/* ==========================================================================
+   RESPONSIVE - ADAPTACIÓN PARA DISPOSITIVOS MÓVILES
+   ========================================================================== */
+@media (max-width: 768px) {
+    #hero {
+        padding: 60px 24px;
+    }
+    
+    #hero::before {
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+    }
+
+    #hero h1 {
+        font-size: 2.4rem;
+        margin-bottom: 20px;
+    }
+
+    #descripcion-hero {
+        font-size: 1.1rem;
+        line-height: 1.6;
     }
 }

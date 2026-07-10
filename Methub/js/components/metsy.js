@@ -295,15 +295,6 @@ function cerrarMetsy(avatar, chatBox) {
 }
 function inyectarMetsy() {
     if (document.getElementById('metsy-container')) return;
-
-    const slot = document.getElementById('navbar-metsy-slot');
     const metsyEl = crearMetsy();
-
-    if (slot) {
-        metsyEl.classList.add('metsy-in-navbar');
-        slot.appendChild(metsyEl);
-    } else {
-        // Fallback por si el navbar todavía no existe
-        document.body.appendChild(metsyEl);
-    }
+    document.body.appendChild(metsyEl);
 }

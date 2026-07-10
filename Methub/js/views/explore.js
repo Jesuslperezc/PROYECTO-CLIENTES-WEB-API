@@ -107,7 +107,9 @@ async function ejecutarFiltradoMet() {
 
 async function renderizarPaginaExplore() {
     const grid = document.getElementById('grid-explorar');
-    grid.innerHTML = "<div class='loading-skeleton'>Extrayendo metadatos...</div>";
+    const spinnerRojo = document.createElement('loading-state');
+    grid.innerHTML = "";
+    grid.appendChild(spinnerRojo);
 
     const filtroAnioInicio = parseInt(document.getElementById('date-begin')?.value.trim(), 10);
     const filtroAnioFin = parseInt(document.getElementById('date-end')?.value.trim(), 10);
@@ -204,43 +206,117 @@ async function renderizarPaginaExplore() {
     });
 
     renderizarControlesPaginacion(puntero >= exploreState.objectIDs.length);
+    }
 }
-function renderizarControlesPaginacion(esFinDeColeccion) {
+function renderizarControlesPaginacion() {
     const container = document.getElementById('paginacion-controls');
-    container.innerHTML = "";
+    if (!container) return;
+    containerClean(container);
 
-    // Si estamos en la primera tanda y ya no quedan IDs por evaluar en la API, ocultamos controles
-    if (exploreState.currentPage === 0 && esFinDeColeccion) return;
+    // --- ALINEACIÓN ULTRA FORZADA EN LÍNEA ---
+    container.style.setProperty('display', 'flex', 'important');
+    container.style.setProperty('flex-direction', 'row', 'important'); /* Fuerza que sea una fila */
+    container.style.setProperty('flex-wrap', 'nowrap', 'important');    /* Prohíbe los saltos de línea */
+    container.style.setProperty('align-items', 'center', 'important');
+    container.style.setProperty('justify-content', 'center', 'important');
+    container.style.gap = "24px"; /* Espaciado generoso entre los 3 elementos */
+    container.style.marginTop = "25px";
+    container.style.width = "100%"; /* Asegura que el contenedor tenga espacio para estirarse */
+    container.style.fontFamily = "'Times New Roman', Times, serif";
 
+    const totalIDs = artistState.todosLosIDs.length;
+    const totalPaginas = Math.ceil(totalIDs / artistState.itemsPerPage);
+    const paginaActual = artistState.currentPage + 1;
+
+    // BOTÓN ANTERIOR
     const btnAnt = document.createElement('button');
-    btnAnt.textContent = "◀ Anterior";
-    btnAnt.className = "btn-back"; 
-    btnAnt.style.padding = "8px 16px";
-    btnAnt.style.margin = "0 5px";
+    btnAnt.textContent = " Anterior";
+    btnAnt.className = "btn-secondary";
+    btnAnt.style.display = "inline-block"; /* Evita que se comporte como bloque completo */
+    btnAnt.style.width = "auto";            /* Evita que ocupe el 100% del ancho */
+    btnAnt.style.padding = "10px 20px";
     btnAnt.style.cursor = "pointer";
-    btnAnt.disabled = exploreState.currentPage === 0;
+    btnAnt.style.borderRadius = "6px";
+    btnAnt.style.border = "1px solid #c4a46a";
+    btnAnt.style.fontWeight = "500";
+    btnAnt.style.whiteSpace = "nowrap";     /* Evita que el texto del botón se rompa */
+    btnAnt.style.transition = "all 0.2s ease";
+    
+    if (artistState.currentPage === 0) {
+        btnAnt.style.backgroundColor = "#f4f1ea";
+        btnAnt.style.color = "#b5af9f";
+        btnAnt.style.border = "1px solid #dcd7cc";
+        btnAnt.style.cursor = "not-allowed";
+    } else {
+        btnAnt.style.backgroundColor = "#ffffff";
+        btnAnt.style.color = "#111111";
+    }
+
+    btnAnt.disabled = artistState.currentPage === 0;
     btnAnt.addEventListener('click', () => {
-        exploreState.currentPage--;
-        actualizarBadgesMétricas();
-        renderizarPaginaExplore();
+        if (artistState.currentPage > 0) {
+            artistState.currentPage--;
+            renderizarPaginaArtista();
+        }
     });
+
+
+    const infoPagina = document.createElement('span');
+    infoPagina.className = 'page-info-text';
+    infoPagina.textContent = `Página ${paginaActual} de ${totalPaginas || 1}`;
+    infoPagina.style.display = "inline-block";
+    infoPagina.style.fontSize = "15px";
+    infoPagina.style.color = "#2c2a27";
+    infoPagina.style.fontWeight = "bold";
+    infoPagina.style.whiteSpace = "nowrap";
+
 
     const btnSig = document.createElement('button');
-    btnSig.textContent = "Siguiente ▶";
-    btnSig.className = "btn-back";
-    btnSig.style.padding = "8px 16px";
-    btnSig.style.margin = "0 5px";
+    btnSig.textContent = "Siguiente ";
+    btnSig.className = "btn-secondary";
+    btnSig.style.display = "inline-block"; 
+    btnSig.style.width = "auto";            
+    btnSig.style.padding = "10px 20px";
     btnSig.style.cursor = "pointer";
-    btnSig.disabled = esFinDeColeccion;
+    btnSig.style.borderRadius = "6px";
+    btnSig.style.border = "1px solid #c4a46a";
+    btnSig.style.fontWeight = "500";
+    btnSig.style.whiteSpace = "nowrap";
+    btnSig.style.transition = "all 0.2s ease";
+
+    const esUltimaPagina = artistState.currentPage >= totalPaginas - 1;
+    if (esUltimaPagina) {
+        btnSig.style.backgroundColor = "#f4f1ea";
+        btnSig.style.color = "#b5af9f";
+        btnSig.style.border = "1px solid #dcd7cc";
+        btnSig.style.cursor = "not-allowed";
+    } else {
+        btnSig.style.backgroundColor = "#ffffff";
+        btnSig.style.color = "#111111";
+    }
+
+    btnSig.disabled = esUltimaPagina;
     btnSig.addEventListener('click', () => {
-        exploreState.currentPage++;
-        actualizarBadgesMétricas();
-        renderizarPaginaExplore();
+        if (artistState.currentPage < totalPaginas - 1) {
+            artistState.currentPage++;
+            renderizarPaginaArtista();
+        }
     });
 
+    // Hovers activos
+    if (artistState.currentPage > 0) {
+        btnAnt.addEventListener('mouseenter', () => { btnAnt.style.backgroundColor = "#c4a46a"; btnAnt.style.color = "white"; });
+        btnAnt.addEventListener('mouseleave', () => { btnAnt.style.backgroundColor = "white"; btnAnt.style.color = "#111111"; });
+    }
+    if (!esUltimaPagina) {
+        btnSig.addEventListener('mouseenter', () => { btnSig.style.backgroundColor = "#c4a46a"; btnSig.style.color = "white"; });
+        btnSig.addEventListener('mouseleave', () => { btnSig.style.backgroundColor = "white"; btnSig.style.color = "#111111"; });
+    }
+
+    // Inyección limpia
     container.appendChild(btnAnt);
+    container.appendChild(infoPagina);
     container.appendChild(btnSig);
-}
 }
 
 function actualizarBadgesMétricas() {

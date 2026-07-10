@@ -178,10 +178,7 @@ function irANodo(nodoId) {
     
     if (nodoId === 'fin' || nodoId === 'inicio') {
         avatar.src = 'assets/metsy_base.png';
-    } else {
-        avatar.src = 'assets/metsy_consulta.png'; 
     }
-
     globo.style.opacity = 0;
     setTimeout(() => {
         globo.textContent = nodo.texto;

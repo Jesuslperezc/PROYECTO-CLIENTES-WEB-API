@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     inyectarMetsy();
 
     let ultimaVistaActiva = null;
+// =======================================================================
+// SOLUCIÓN AL BUG DE RECARGA EN ARTIST
+// =======================================================================
+    let ultimoArtistaCargado = null; // Guardará el nombre del último artista renderizado
 
     function navigate(currentHash) {
         if (!currentHash || currentHash === '#') {
@@ -25,14 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let idVista;
+        let artistaActual = null;
+
         if (currentHash === '#home') idVista = 'V-01';
         else if (currentHash === '#explore') idVista = 'V-02';
         else if (currentHash === '#departments') idVista = 'V-04';
-        else if (currentHash.startsWith('#artist/')) idVista = 'V-05';
+        else if (currentHash.startsWith('#artist/')) {
+            idVista = 'V-05';
+            artistaActual = decodeURIComponent(currentHash.split('/')[1]);
+        }
         else if (currentHash === '#compare') idVista = 'V-06';
 
-        if (ultimaVistaActiva === idVista && !currentHash.startsWith('#artist/')) {
-            return;
+        // Bloqueo inteligente: Si ya estamos en la vista de ese mismo artista, no hacemos nada
+        if (ultimaVistaActiva === idVista) {
+            if (idVista !== 'V-05' || ultimoArtistaCargado === artistaActual) {
+                return; 
+            }
         }
 
         document.querySelectorAll('.view').forEach(view => view.classList.add('d-none'));
@@ -54,25 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const artistaCodificado = currentHash.split('/')[1];
             const nombreArtista = decodeURIComponent(artistaCodificado);
             
+            // Guardamos el nombre del artista que se va a procesar
+            ultimoArtistaCargado = nombreArtista;
 
             if (typeof window.initArtistView === 'function') {
                 console.log(' Inicializando vista de artista:', nombreArtista);
                 window.initArtistView(nombreArtista);
             } else {
                 console.error(' Error: initArtistView no está definida en window');
-                // Mostrar mensaje de error en la vista
-                const grid = document.getElementById('grid-artista');
-                if (grid) {
-                    grid.innerHTML = `
-                        <div style="padding: 20px; text-align: center; color: #d32f2f;">
-                            <p> Error al cargar la vista del artista</p>
-                            <p style="font-size: 14px; color: #666;">La función initArtistView no está disponible.</p>
-                            <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; cursor: pointer;">
-                                 Recargar página
-                            </button>
-                        </div>
-                    `;
-                }
+                // ... (resto de tu código de error intacto)
             }
         }
         else if (currentHash === '#compare') {

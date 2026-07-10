@@ -306,8 +306,7 @@ async function initArtistView(nombreArtista) {
     const titleElement = document.getElementById('artist-name-title');
     if (titleElement) titleElement.textContent = nombreArtista;
 
-    const bioElement = document.getElementById('artist-bio');
-    if (bioElement) bioElement.textContent = " Buscando colecciones en el Met...";
+
 
     const totalElement = document.getElementById('artist-total-works');
     const grid = document.getElementById('grid-artista');
@@ -359,9 +358,7 @@ async function initArtistView(nombreArtista) {
         artistState.todosLosIDs = data.objectIDs;
         artistState.totalObrasEncontradas = data.objectIDs.length;
 
-        if (bioElement) {
-            bioElement.textContent = ` Mostrando obras de ${nombreArtista}`;
-        }
+
 
         console.log(` Total de IDs a procesar: ${data.objectIDs.length}`);
         await renderizarPaginaArtista();

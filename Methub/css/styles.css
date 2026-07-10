@@ -496,213 +496,193 @@ margin: 0;
     border-color: #c4a46a;
     color: #ffffff;
 }
-/* ==========================================================================
-   V-02: EXPLORAR - LAYOUT PRINCIPAL
-   ========================================================================== */
-#V-02 {
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-}
 
+
+/* El contenedor que divide los filtros de la galería */
 .explore-layout {
     display: flex;
-    gap: 30px;
+    gap: 40px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
     align-items: flex-start;
 }
 
-/* ==========================================================================
-   PANEL DE FILTROS (ASIDE) - Estilo Editorial
-   ========================================================================== */
+/* El panel lateral: actua como un monolito o pedestal fijo */
 #panel-filtros {
-    flex: 0 0 300px;
-    background: #ffffff;
-    border-radius: 8px; /* Bordes más rectos y finos, menos "móvil" */
-    padding: 24px;
-    box-shadow: 0 4px 15px rgba(196, 164, 106, 0.05); /* Sombra con un sutil tinte oro */
-    border: 1px solid #eae6dc; /* Tono lienzo/crema */
+    flex: 0 0 320px; /* Ancho fijo e imponente para los controles */
+    background-color: #fdfbf7; /* Fondo pergamino / lienzo limpio */
+    border: 1px solid #eae6dc;
+    border-radius: 8px;
+    padding: 30px 24px;
+    box-sizing: border-box;
+    
+    /* CONTROL DE ALTURA RESPECTO AL NAV BAR */
     position: sticky;
-    top: 20px;
+    top: 20px; /* Desplaza el panel hacia abajo para que no choque con el Nav */
+    z-index: 10;
+    
+    box-shadow: 0 4px 20px rgba(28, 26, 23, 0.02);
 }
 
+/* Título superior del panel */
 #panel-filtros h3 {
-    font-size: 1.35rem;
-    color: #111111;
-    margin-bottom: 20px;
-    font-family: 'Times New Roman', Times, serif; /* Tipografía clásica de museo */
-    font-weight: bold;
-    border-bottom: 1px solid #c4a46a; /* Línea dorada divisoria */
-    padding-bottom: 10px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #704c0c;
+    margin-top: 40;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #c4a46a; /* Línea de acento oro viejo */
     letter-spacing: 0.5px;
 }
 
 /* Grupos de control individuales */
 .control-group {
+    margin-bottom: 22px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 20px;
 }
 
+/* Etiquetas del museo */
 .control-group label {
-    font-size: 0.75rem;
-    font-weight: bold;
-    color: #8a8475; /* Gris cálido / piedra */
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
+    color: #6e6450; /* Gris piedra cálido */
 }
 
-/* Inputs y Selects */
+/* Cajas de texto, inputs numéricos y selectores */
 #search-input,
-#select-departamento {
+#select-departamento,
+.search-input,
+.select-periodo {
     width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #eae6dc;
-    border-radius: 4px; /* Cuadrados refinados */
-    font-size: 0.95rem;
-    font-family: system-ui, sans-serif;
-    color: #111111;
-    background-color: #fdfbf7; /* Fondo pergamino/crema muy suave */
-    transition: all 0.25s ease;
-    box-sizing: border-box;
-}
-
-#search-input:focus,
-#select-departamento:focus {
-    outline: none;
-    border-color: #c4a46a; /* Enfoque en Oro Viejo */
+    padding: 12px 14px;
     background-color: #ffffff;
+    border: 1px solid #dcd7cc;
+    border-radius: 4px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.05rem;
+    color: #704c0c;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
+}
+
+/* Focus sofisticado iluminando el contorno en oro viejo */
+#search-input:focus,
+#select-departamento:focus,
+.search-input:focus,
+.select-periodo:focus {
+    outline: none;
+    border-color: #c4a46a;
     box-shadow: 0 0 0 3px rgba(196, 164, 106, 0.15);
+    background-color: #ffffff;
 }
 
-/* Checkboxes estructurados */
-.control-group.checkboxes {
-    gap: 12px;
-    margin-bottom: 28px;
+/* Estructura para los bloques de fecha lado a lado */
+.control-group.dates {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 25px;
 }
 
+.año-input-block {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.año-input-block .search-input {
+    flex: 1; /* El input numérico ocupa el espacio disponible */
+}
+
+.año-input-block .select-periodo {
+    flex: 0 0 85px; /* El selector AC/DC mantiene un ancho controlado */
+    text-align: center;
+}
+
+/* Checkboxes con comportamiento refinado */
 .control-group.checkboxes label {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #222222;
-    font-size: 0.9rem;
-    text-transform: none;
-    letter-spacing: normal;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.05rem;
+    text-transform: none; /* Quitamos mayúsculas para las opciones */
+    letter-spacing: 0;
+    color: #111111;
     cursor: pointer;
-    user-select: none;
-    font-weight: normal;
+    margin-bottom: 8px;
 }
 
-/* Customización sutil del checkbox nativo */
 .control-group.checkboxes input[type="checkbox"] {
+    accent-color: #c4a46a; /* Pinta el check nativo en el color oro de la app */
     width: 16px;
     height: 16px;
     cursor: pointer;
-    accent-color: #c4a46a; /* Hace que el check nativo se pinte de dorado v*/
 }
-/* Agrupador para unificar el Input con su Select */
-.año-input-block {
-    display: flex;
-    align-items: center;
-    border: 1px solid #eae6dc;
-    border-radius: 4px;
-    background-color: #fdfbf7; /* Fondo pergamino muy suave */
-    overflow: hidden;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+/* ==========================================================================
+   BOTONES DE ACCIÓN DEL PANEL
+   ========================================================================== */
+
+/* Botón principal: Buscar en la Colección */
+#btn-buscar.btn-primary {
     width: 100%;
-    box-sizing: border-box;
-}
-
-/* Aplicamos el enfoque dorado cuando el usuario cliquee dentro del bloque */
-.año-input-block:focus-within {
-    border-color: #c4a46a;
-    box-shadow: 0 0 0 3px rgba(196, 164, 106, 0.15);
-}
-
-/* Ajustamos tu input original para que no tenga bordes propios dentro del bloque */
-.año-input-block .search-input {
-    flex: 1;
-    border: none !important;
-    background: transparent !important;
-    padding: 12px;
-    margin: 0;
-    outline: none;
-    box-shadow: none !important;
-    width: 60%;
-}
-
-/* El selector de período con estética editorial */
-.select-periodo {
-    width: 40%;
-    max-width: 65px;
-    border: none;
-    border-left: 1px solid #eae6dc;
-    background-color: #f7f4ee; /* Tono paspartú un poco más oscuro */
-    color: #6e6450;
-    font-size: 0.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    outline: none;
-    height: 100%;
-    padding: 12px 4px;
-    text-align: center;
-}
-
-/* Limpieza de flechas nativas para inputs numéricos */
-.año-input-block input::-webkit-outer-spin-button,
-.año-input-block input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.año-input-block input[type="number"] {
-    -moz-appearance: textfield; /* Control para Firefox */
-    appearance: textfield;      /* Propiedad estándar moderna */
-}
-
-
-/* Botones de acción - Alta Costura */
-.btn-primary {
-    width: 100%;
-    background: #111111; /* Negro absoluto de catálogo de arte */
+    background-color: #553909e0;
     color: #ffffff;
-    font-family: 'Times New Roman', Times, serif;
-    font-weight: bold;
-    letter-spacing: 1px;
     border: 1px solid #111111;
     padding: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: all 0.25s ease;
-    font-size: 0.95rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.85rem;
+    font-weight: bold;
     text-transform: uppercase;
-}
-
-.btn-primary:hover {
-    background: #c4a46a; /* Cambia a oro viejo en hover */
-    border-color: #c4a46a;
-    color: #ffffff;
-}
-
-.btn-secondary {
-    width: 100%;
-    background: transparent;
-    color: #8a8475;
-    border: 1px solid #eae6dc;
-    padding: 12px;
+    letter-spacing: 1.5px;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: 500;
     transition: all 0.25s ease;
-    font-size: 0.95rem;
+    margin-bottom: 12px;
+    margin-top: 10px;
 }
 
-.btn-secondary:hover {
-    background: #fdfbf7;
-    color: #111111;
+#btn-buscar.btn-primary:hover {
+    background-color: #c4a46a;
     border-color: #c4a46a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(196, 164, 106, 0.2);
 }
+
+/* Botón secundario: Limpiar Filtros */
+#btn-limpiar.btn-secondary {
+    width: 100%;
+    background-color: transparent;
+    color: #6e6450;
+    border: 1px solid #dcd7cc;
+    padding: 12px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+#btn-limpiar.btn-secondary:hover {
+    background-color: #f4f1ea;
+    color: #111111;
+    border-color: #111111;
+}
+
 
 /* ==========================================================================
    PANEL DE RESULTADOS (DERECHA)

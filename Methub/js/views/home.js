@@ -7,7 +7,6 @@ async function cargarVistaHome() {
     statsContainer.textContent = "";
     gridDestacados.textContent = "";
 
-    statsContainer.innerHTML = "<p>Cargando estadísticas...</p>";
     const spinnerRojo = document.createElement('loading-state');
     gridDestacados.appendChild(spinnerRojo);
 

@@ -3,10 +3,32 @@ let compareState = {
     obraB: null
 };
 
+
+let compareAbortController = new AbortController();
+
+function reiniciarAbortComparador() {
+    compareAbortController.abort();
+    compareAbortController = new AbortController();
+    return compareAbortController.signal;
+}
+
+async function procesarEnLotes(items, worker) {
+    for (let i = 0; i < items.length; i += RATE_CONFIG.MAX_CONCURRENT) {
+        const lote = items.slice(i, i + RATE_CONFIG.MAX_CONCURRENT);
+        await Promise.all(lote.map(worker));
+        if (i + RATE_CONFIG.MAX_CONCURRENT < items.length) {
+            await delay(RATE_CONFIG.BATCH_DELAY_MS);
+        }
+    }
+}
+
 /**
  * Inicializa la vista del comparador.
  */
 async function initCompareView(idA = null, idB = null) {
+    // Cancelamos cualquier fetch pendiente de una entrada anterior a la vista
+    reiniciarAbortComparador();
+
     const panelA = document.getElementById('compare-panel-a');
     const panelB = document.getElementById('compare-panel-b');
     const tableContainer = document.getElementById('compare-table-container');
@@ -16,14 +38,57 @@ async function initCompareView(idA = null, idB = null) {
     containerClean(tableContainer);
     tableContainer.classList.add('d-none');
 
-    // Inicializamos estados de carga visual usando await por el flujo de favoritos
     panelA.appendChild(await crearPlaceholderPanel("A"));
     panelB.appendChild(await crearPlaceholderPanel("B"));
 
-    if (idA) await cargarObraEnPanel(idA, 'A');
-    if (idB) await cargarObraEnPanel(idB, 'B');
-}
+    if (idA) {
+        await cargarObraEnPanel(idA, 'A');
+    }
 
+    if (idB && compareState.obraA) {
+        await cargarObraEnPanel(idB, 'B');
+    }
+
+    actualizarFlujoYBloqueos();
+}
+function actualizarFlujoYBloqueos() {
+    const panelB = document.getElementById('compare-panel-b');
+    const selectA = document.getElementById('select-compare-a');
+    const selectB = document.getElementById('select-compare-b');
+
+    // Evaluamos PRIORITARIAMENTE el objeto de estado global
+    const idActivoA = compareState.obraA ? parseInt(compareState.obraA.objectID) : (selectA && selectA.value ? parseInt(selectA.value) : null);
+    const idActivoB = compareState.obraB ? parseInt(compareState.obraB.objectID) : (selectB && selectB.value ? parseInt(selectB.value) : null);
+
+    // Si hay una obra en A (ya sea en el estado o en el select), desbloqueamos B
+    if (!idActivoA) {
+        if (panelB) {
+            panelB.style.opacity = '0.5';
+            panelB.style.pointerEvents = 'none';
+        }
+        if (selectB) selectB.disabled = true;
+    } else {
+        if (panelB) {
+            panelB.style.opacity = '1';
+            panelB.style.pointerEvents = 'auto';
+        }
+        if (selectB) selectB.disabled = false;
+    }
+
+    if (selectA) {
+        Array.from(selectA.options).forEach(option => {
+            if (!option.value) return;
+            option.disabled = (parseInt(option.value) === idActivoB);
+        });
+    }
+
+    if (selectB) {
+        Array.from(selectB.options).forEach(option => {
+            if (!option.value) return;
+            option.disabled = (parseInt(option.value) === idActivoA);
+        });
+    }
+}
 // === MODIFICADO: Ahora es async y genera un select con tus favoritos ===
 async function crearPlaceholderPanel(letra) {
     const div = document.createElement('div');
@@ -56,6 +121,9 @@ async function crearPlaceholderPanel(letra) {
 
     // Creamos el selector desplegable elegante
     const selectFav = document.createElement('select');
+    // FIX: id necesario para que actualizarFlujoYBloqueos() pueda encontrarlo
+    // y aplicar el bloqueo cruzado de IDs entre panel A y panel B.
+    selectFav.id = `select-compare-${letra.toLowerCase()}`;
     selectFav.style.margin = '15px 0';
     selectFav.style.padding = '10px';
     selectFav.style.width = '80%';
@@ -75,32 +143,57 @@ async function crearPlaceholderPanel(letra) {
 
     div.appendChild(selectFav);
 
-    // Al cambiar la opción del select, carga la obra automáticamente
-    selectFav.addEventListener('change', () => {
+
+    selectFav.addEventListener('change', async () => {
         const idSeleccionado = selectFav.value;
         if (idSeleccionado) {
-            cargarObraEnPanel(idSeleccionado, letra);
+
+            await cargarObraEnPanel(idSeleccionado, letra);
+
+
+            actualizarFlujoYBloqueos();
+        } else {
+            // FIX: antes solo se limpiaba compareState.obraA; ahora también
+            // se limpia compareState.obraB cuando se vuelve a la opción por
+            // defecto en el panel B, evitando que quede un estado "fantasma".
+            if (letra === 'A') {
+                compareState.obraA = null;
+            } else {
+                compareState.obraB = null;
+            }
+            verificarYRenderizarTablaComparativa();
+            actualizarFlujoYBloqueos();
         }
     });
 
-    // Poblamos el select trayendo los nombres desde la API de forma asíncrona e inmediata
-    favoritosIds.forEach(async (id) => {
+    // Creamos primero todas las <option> en orden (para no alterar el orden
+    // de favoritos aunque las respuestas lleguen desordenadas), y las vamos
+    // completando a medida que resuelve cada lote.
+    const itemsAPoblar = favoritosIds.map(id => {
         const option = document.createElement('option');
         option.value = id;
         option.textContent = `Cargando ID: ${id}...`;
         selectFav.appendChild(option);
+        return { id, option };
+    });
 
-        try {
-            const res = await fetch(`${API_BASE}/objects/${id}`);
-            if (res.ok) {
-                const data = await res.json();
-                option.textContent = `${data.title || 'Sin título'} (ID: ${id})`;
-            } else {
-                option.textContent = `Obra inaccesible (ID: ${id})`;
-            }
-        } catch {
-            option.textContent = `Error al cargar ID: ${id}`;
+    const signal = compareAbortController.signal;
+
+    // Poblamos el select trayendo los nombres desde la API, en lotes
+    // controlados por RATE_CONFIG (throttling + reintentos), en vez de
+    // disparar un fetch por favorito en paralelo.
+    procesarEnLotes(itemsAPoblar, async ({ id, option }) => {
+        const data = await fetchObjetoConReintento(id, signal, API_BASE);
+        if (data) {
+            option.textContent = `${data.title || 'Sin título'} (ID: ${id})`;
+        } else {
+            option.textContent = `Obra inaccesible (ID: ${id})`;
         }
+
+        // Re-aplicamos el bloqueo cruzado cada vez que se completa una
+        // opción, por si la carga termina después de que ya había una obra
+        // seleccionada en el otro panel.
+        actualizarFlujoYBloqueos();
     });
 
     return div;
@@ -116,9 +209,8 @@ async function cargarObraEnPanel(id, letra) {
     targetPanel.appendChild(loading);
 
     try {
-        const res = await fetch(`${API_BASE}/objects/${id}`);
-        if (!res.ok) throw new Error('Obra inválida');
-        const obra = await res.json();
+        const obra = await fetchObjetoConReintento(id, compareAbortController.signal, API_BASE);
+        if (!obra) throw new Error('Obra inválida');
 
         if (letra === 'A') compareState.obraA = obra;
         else compareState.obraB = obra;
@@ -147,6 +239,7 @@ async function cargarObraEnPanel(id, letra) {
             // Re-inyectamos el placeholder de favoritos asíncronamente
             targetPanel.appendChild(await crearPlaceholderPanel(letra));
             verificarYRenderizarTablaComparativa();
+            actualizarFlujoYBloqueos();
         });
         cardView.appendChild(btnRemover);
 
@@ -169,9 +262,10 @@ async function cargarObraEnPanel(id, letra) {
         pArtista.style.fontStyle = 'italic';
         pArtista.textContent = obra.artistDisplayName ? `Por: ${obra.artistDisplayName}` : 'Artista Desconocido';
         cardView.appendChild(pArtista);
-
         targetPanel.appendChild(cardView);
         verificarYRenderizarTablaComparativa();
+        actualizarFlujoYBloqueos()
+        
 
     } catch (err) {
         console.error("Error al cargar en comparador:", err);
@@ -184,6 +278,7 @@ async function cargarObraEnPanel(id, letra) {
         // Caída segura regresando al selector de favoritos
         const nuevoPlaceholder = await crearPlaceholderPanel(letra);
         targetPanel.appendChild(nuevoPlaceholder);
+
     }
 }
 
@@ -267,10 +362,3 @@ function verificarYRenderizarTablaComparativa() {
     tableContainer.appendChild(table);
 }
 
-function containerClean(element) {
-    if (element) {
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
-        }
-    }
-}

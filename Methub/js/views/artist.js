@@ -108,11 +108,35 @@ function dibujarTarjetas(obras) {
         grid.appendChild(card);
     });
 }
-
 function renderizarControlesPaginacionArtista() {
     const container = document.getElementById('paginacion-artista-controls');
     if (!container) return;
     containerClean(container);
+
+    // =======================================================================
+    // LOGICA DE ASIGNACIÓN PARA EL BOTÓN DE VOLVER (EVITA DESAPARECER)
+    // =======================================================================
+    const btnVolver = document.createElement('button');
+    btnVolver.textContent = " Volver";
+    btnVolver.className = "btn-secondary";
+    btnVolver.style.display = "inline-block";
+    btnVolver.style.width = "auto";
+    btnVolver.style.padding = "10px 20px";
+    btnVolver.style.cursor = "pointer";
+    btnVolver.style.borderRadius = "6px";
+    btnVolver.style.border = "1px solid #c4a46a";
+    btnVolver.style.fontWeight = "500";
+    btnVolver.style.whiteSpace = "nowrap";
+    btnVolver.style.transition = "all 0.2s ease";
+        btnVolver.onclick = () => { 
+            // Cancela cargas activas del artista para evitar bugs en segundo plano
+            if (artistState.abortController) {
+                artistState.abortController.abort();
+            }
+            window.location.hash = '#explore'; 
+        };
+    
+    // =======================================================================
 
     container.style.setProperty('display', 'flex', 'important');
     container.style.setProperty('flex-direction', 'row', 'important');
@@ -212,6 +236,7 @@ function renderizarControlesPaginacionArtista() {
     container.appendChild(btnAnt);
     container.appendChild(infoPagina);
     container.appendChild(btnSig);
+    container.appendChild(btnVolver);
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -261,7 +286,6 @@ async function fetchObjetoConReintento(id, signal, apiBase, intento = 0) {
 }
 
 // --- FUNCIÓN PRINCIPAL ---
-
 async function initArtistView(nombreArtista) {
     console.log(' Iniciando vista de artista:', nombreArtista);
 
@@ -293,10 +317,14 @@ async function initArtistView(nombreArtista) {
         grid.appendChild(spinnerRojo);
     }
 
+    // === MODIFICACIÓN DEL BOTÓN DE RETORNO DIRECTO AL EXPLORADOR ===
     const btnVolver = document.getElementById('btn-volver-artista');
     if (btnVolver) {
-        btnVolver.onclick = () => { window.history.back(); };
+        btnVolver.onclick = () => { 
+            window.location.hash = '#explore'; // Redirección interna por Hash sin refrescar
+        };
     }
+    // ==============================================================
 
     const contenedorPaginacion = crearContenedorPaginacionArtista();
     if (contenedorPaginacion) {
@@ -351,11 +379,10 @@ async function initArtistView(nombreArtista) {
                 "Hubo un problema al conectar con el Met. Por favor, verifica tu conexión.",
                 () => { initArtistView(nombreArtista); }
             );
-            grid.appendChild(moduloError); // <- FIX: antes era "errorDiv", variable inexistente
+            grid.appendChild(moduloError);
         }
     }
 }
-
 async function renderizarPaginaArtista() {
     if (artistState.isLoading) {
         console.log(' Ya hay una carga en proceso...');

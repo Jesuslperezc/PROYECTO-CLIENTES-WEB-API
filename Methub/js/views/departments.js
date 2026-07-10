@@ -1,7 +1,7 @@
 async function initDepartments() {
     const grid = document.getElementById('grid-departamentos');
-    grid.innerHTML = "<div class='loading-skeleton'>Abriendo los salones del museo...</div>";
-
+       const spinnerRojo = document.createElement('loading-state');
+        grid.appendChild(spinnerRojo);
     try {
         const res = await fetch(`${API_BASE}/departments`);
         const data = await res.json();
@@ -26,8 +26,14 @@ async function initDepartments() {
         });
 
     } catch (err) {
-        console.error("Error:", err);
-        grid.innerHTML = "<p>No pudimos abrir las salas de exhibición. Inténtalo de nuevo.</p>";
+        const moduloError = document.createElement('error-state');
+        grid.innerHTML = "";
+        moduloError.render(
+
+            "Hubo un problema al conectar con el Met. Por favor, verifica tu conexión.",
+            () => { initDepartments(); }
+        );
+        grid.appendChild(moduloError)
     }
 }
 

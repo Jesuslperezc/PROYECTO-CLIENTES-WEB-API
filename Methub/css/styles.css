@@ -413,26 +413,28 @@ body {
 }
 
 /* ==========================================================================
-   PANEL DE FILTROS (ASIDE)
+   PANEL DE FILTROS (ASIDE) - Estilo Editorial
    ========================================================================== */
 #panel-filtros {
-    flex: 0 0 300px; /* Ancho fijo de 300px para los filtros */
+    flex: 0 0 300px;
     background: #ffffff;
-    border-radius: 20px;
+    border-radius: 8px; /* Bordes más rectos y finos, menos "móvil" */
     padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 15px rgba(196, 164, 106, 0.05); /* Sombra con un sutil tinte oro */
+    border: 1px solid #eae6dc; /* Tono lienzo/crema */
     position: sticky;
-    top: 20px; /* Se queda congelado al hacer scroll */
+    top: 20px;
 }
 
 #panel-filtros h3 {
-    font-size: 1.25rem;
-    color: #0f172a;
+    font-size: 1.35rem;
+    color: #111111;
     margin-bottom: 20px;
-    font-weight: 700;
-    border-bottom: 2px solid #f1f5f9;
+    font-family: 'Times New Roman', Times, serif; /* Tipografía clásica de museo */
+    font-weight: bold;
+    border-bottom: 1px solid #c4a46a; /* Línea dorada divisoria */
     padding-bottom: 10px;
+    letter-spacing: 0.5px;
 }
 
 /* Grupos de control individuales */
@@ -444,11 +446,11 @@ body {
 }
 
 .control-group label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #8a8475; /* Gris cálido / piedra */
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 /* Inputs y Selects */
@@ -456,21 +458,22 @@ body {
 #select-departamento {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
+    border: 1px solid #eae6dc;
+    border-radius: 4px; /* Cuadrados refinados */
     font-size: 0.95rem;
-    color: #1a202c;
-    background-color: #f8fafc;
-    transition: all 0.2s ease;
+    font-family: system-ui, sans-serif;
+    color: #111111;
+    background-color: #fdfbf7; /* Fondo pergamino/crema muy suave */
+    transition: all 0.25s ease;
     box-sizing: border-box;
 }
 
 #search-input:focus,
 #select-departamento:focus {
     outline: none;
-    border-color: #4f46e5; /* Azul digital de la interfaz de Leo */
+    border-color: #c4a46a; /* Enfoque en Oro Viejo */
     background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 0 0 3px rgba(196, 164, 106, 0.15);
 }
 
 /* Checkboxes estructurados */
@@ -483,95 +486,101 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #334155;
-    font-size: 0.95rem;
+    color: #222222;
+    font-size: 0.9rem;
     text-transform: none;
     letter-spacing: normal;
     cursor: pointer;
     user-select: none;
+    font-weight: normal;
 }
 
-.control-group checkboxes input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+/* Customización sutil del checkbox nativo */
+.control-group.checkboxes input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
     cursor: pointer;
+    accent-color: #c4a46a; /* Hace que el check nativo se pinte de dorado */
 }
 
-/* Botones de acción */
+/* Botones de acción - Alta Costura */
 .btn-primary {
     width: 100%;
-    background: #4f46e5;
+    background: #111111; /* Negro absoluto de catálogo de arte */
     color: #ffffff;
-    font-weight: 600;
-    border: none;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: 1px solid #111111;
     padding: 14px;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     margin-bottom: 10px;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     font-size: 0.95rem;
+    text-transform: uppercase;
 }
 
 .btn-primary:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    background: #c4a46a; /* Cambia a oro viejo en hover */
+    border-color: #c4a46a;
+    color: #ffffff;
 }
 
 .btn-secondary {
     width: 100%;
     background: transparent;
-    color: #64748b;
-    border: 2px solid #e2e8f0;
+    color: #8a8475;
+    border: 1px solid #eae6dc;
     padding: 12px;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     font-size: 0.95rem;
 }
 
 .btn-secondary:hover {
-    background: #f1f5f9;
-    color: #334155;
-    border-color: #cbd5e1;
+    background: #fdfbf7;
+    color: #111111;
+    border-color: #c4a46a;
 }
 
 /* ==========================================================================
    PANEL DE RESULTADOS (DERECHA)
    ========================================================================== */
 .explore-results {
-    flex: 1; /* Ocupa todo el espacio restante */
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Métricas en vivo (Metsy/Contadores) */
+/* Métricas en vivo (Metsy/Contadores al estilo paspartú) */
 #panel-agregados {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     flex-wrap: wrap;
 }
 
 .badge {
     display: inline-flex;
     align-items: center;
-    padding: 6px 16px;
-    font-size: 0.8rem;
+    padding: 6px 14px;
+    font-size: 0.75rem;
     font-weight: 600;
-    border-radius: 30px;
+    border-radius: 4px; /* Eliminado el estilo píldora/deportiva */
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+    background-color: #f7f4ee; /* Crema institucional */
+    color: #6e6450;
+    border: 1px solid #eae2d1;
 }
 
 .badge.visual {
-    background-color: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background-color: #f0fbf4; /* Verde oliva/conservación suave */
+    color: #2b5c3f;
+    border: 1px solid #d2ecd9;
 }
 
 /* El Grid dinámico de 12 tarjetas */

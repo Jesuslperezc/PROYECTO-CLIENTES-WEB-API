@@ -397,6 +397,46 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
 }
+.btn-favorito-modal {
+    background: transparent;
+    color: #111111;
+    border: 1px solid #c4a46a; /* El oro viejo de MetHub */
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Times New Roman', Times, serif;
+    cursor: pointer;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    margin-top: 12px;
+}
+
+/* Hover suave */
+.btn-favorito-modal:hover {
+    background: #fdfbf7;
+    border-color: #111111;
+    transform: translateY(-1px);
+}
+
+/* Estado cuando la obra YA es favorita */
+.btn-favorito-modal.es-favorito {
+    background: #111111; /* Se viste de gala (negro carbón) */
+    color: #ffffff;
+    border-color: #111111;
+}
+
+.btn-favorito-modal.es-favorito .icono-estrella {
+    color: #c4a46a; /* Estrella dorada */
+}
+
+.btn-favorito-modal.es-favorito:hover {
+    background: #c4a46a; /* Oro al pasar el cursor para desmarcar */
+    border-color: #c4a46a;
+    color: #ffffff;
+}
 /* ==========================================================================
    V-02: EXPLORAR - LAYOUT PRINCIPAL
    ========================================================================== */

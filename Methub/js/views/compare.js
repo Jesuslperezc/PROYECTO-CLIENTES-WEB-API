@@ -5,7 +5,6 @@ let compareState = {
 
 /**
  * Inicializa la vista del comparador.
- * Puede recibir IDs opcionales si se decide enviar obras directamente desde el detalle.
  */
 async function initCompareView(idA = null, idB = null) {
     const panelA = document.getElementById('compare-panel-a');
@@ -17,47 +16,93 @@ async function initCompareView(idA = null, idB = null) {
     containerClean(tableContainer);
     tableContainer.classList.add('d-none');
 
-    // Inicializamos estados de carga visual o placeholders
-    panelA.appendChild(crearPlaceholderPanel("A"));
-    panelB.appendChild(crearPlaceholderPanel("B"));
+    // Inicializamos estados de carga visual usando await por el flujo de favoritos
+    panelA.appendChild(await crearPlaceholderPanel("A"));
+    panelB.appendChild(await crearPlaceholderPanel("B"));
 
-    // Si entran IDs específicos por la URL (ej: #compare/1234/5678) los cargamos directamente
     if (idA) await cargarObraEnPanel(idA, 'A');
     if (idB) await cargarObraEnPanel(idB, 'B');
 }
 
-function crearPlaceholderPanel(letra) {
+// === MODIFICADO: Ahora es async y genera un select con tus favoritos ===
+async function crearPlaceholderPanel(letra) {
     const div = document.createElement('div');
     div.className = 'compare-placeholder';
     div.style.textAlign = 'center';
     div.style.padding = '40px 20px';
-    div.style.border = '2px dashed #444';
+    div.style.border = '2px dashed #c4a46a'; /* Oro viejo a juego con el museo */
     div.style.borderRadius = '8px';
+    div.style.backgroundColor = '#fdfbf7';
 
     const p = document.createElement('p');
-    p.textContent = `No hay ninguna obra seleccionada para el Panel ${letra}.`;
-    p.style.color = '#888';
+    p.textContent = `Selecciona una obra de tus favoritas para el Panel ${letra}.`;
+    p.style.color = '#111111';
+    p.style.fontFamily = "'Times New Roman', Times, serif";
+    p.style.fontSize = '16px';
+    div.appendChild(p);
 
-    // Un input rápido de texto por si quieres buscar o meter un ID a mano directamente en el panel
-    const inputId = document.createElement('input');
-    inputId.type = 'number';
-    inputId.placeholder = 'Ingresa ID de la obra...';
-    inputId.className = 'search-input'; // Reutiliza tus estilos de inputs
-    inputId.style.margin = '10px 5px';
-    inputId.style.padding = '6px';
+    const favoritosIds = obtenerFavoritos(); // Llamada a tu favoritos.js
 
-    const btnCargar = document.createElement('button');
-    btnCargar.textContent = `Cargar en ${letra}`;
-    btnCargar.className = 'btn-back'; // Reutiliza tus estilos de botones
-    btnCargar.style.padding = '6px 12px';
-    btnCargar.addEventListener('click', () => {
-        const id = inputId.value.trim();
-        if (id) cargarObraEnPanel(id, letra);
+    if (favoritosIds.length === 0) {
+   
+        const aviso = document.createElement('p');
+        aviso.textContent = " No tienes obras guardadas en favoritos. Agrégalas desde el menú de detalles o explora la galería.";
+        aviso.style.fontSize = '13px';
+        aviso.style.color = '#8a8475';
+        aviso.style.fontStyle = 'italic';
+        div.appendChild(aviso);
+        return div;
+    }
+
+    // Creamos el selector desplegable elegante
+    const selectFav = document.createElement('select');
+    selectFav.style.margin = '15px 0';
+    selectFav.style.padding = '10px';
+    selectFav.style.width = '80%';
+    selectFav.style.maxWidth = '300px';
+    selectFav.style.borderRadius = '6px';
+    selectFav.style.border = '1px solid #c4a46a';
+    selectFav.style.fontFamily = "system-ui, sans-serif";
+    selectFav.style.display = 'block';
+    selectFav.style.marginLeft = 'auto';
+    selectFav.style.marginRight = 'auto';
+
+    // Opción por defecto
+    const optDefault = document.createElement('option');
+    optDefault.value = '';
+    optDefault.textContent = '--- Elige una obra favorita ---';
+    selectFav.appendChild(optDefault);
+
+    div.appendChild(selectFav);
+
+    // Al cambiar la opción del select, carga la obra automáticamente
+    selectFav.addEventListener('change', () => {
+        const idSeleccionado = selectFav.value;
+        if (idSeleccionado) {
+            cargarObraEnPanel(idSeleccionado, letra);
+        }
     });
 
-    div.appendChild(p);
-    div.appendChild(inputId);
-    div.appendChild(btnCargar);
+    // Poblamos el select trayendo los nombres desde la API de forma asíncrona e inmediata
+    favoritosIds.forEach(async (id) => {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = `Cargando ID: ${id}...`;
+        selectFav.appendChild(option);
+
+        try {
+            const res = await fetch(`${API_BASE}/objects/${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                option.textContent = `${data.title || 'Sin título'} (ID: ${id})`;
+            } else {
+                option.textContent = `Obra inaccesible (ID: ${id})`;
+            }
+        } catch {
+            option.textContent = `Error al cargar ID: ${id}`;
+        }
+    });
+
     return div;
 }
 
@@ -75,30 +120,32 @@ async function cargarObraEnPanel(id, letra) {
         if (!res.ok) throw new Error('Obra inválida');
         const obra = await res.json();
 
-        // Guardamos en el estado local
         if (letra === 'A') compareState.obraA = obra;
         else compareState.obraB = obra;
 
         containerClean(targetPanel);
 
-        // Construcción segura del contenedor de la tarjeta de comparación
         const cardView = document.createElement('div');
         cardView.className = 'compare-card-active';
 
         const btnRemover = document.createElement('button');
         btnRemover.textContent = '✕ Quitar';
         btnRemover.style.float = 'right';
-        btnRemover.style.backgroundColor = '#ef4444';
+        btnRemover.style.backgroundColor = '#111111'; /* Cambiado a negro carbón del museo */
         btnRemover.style.color = '#fff';
-        btnRemover.style.border = 'none';
-        btnRemover.style.padding = '4px 8px';
+        btnRemover.style.border = '1px solid #c4a46a';
+        btnRemover.style.padding = '6px 12px';
         btnRemover.style.cursor = 'pointer';
         btnRemover.style.borderRadius = '4px';
-        btnRemover.addEventListener('click', () => {
+        btnRemover.style.fontFamily = "'Times New Roman', Times, serif";
+        
+        btnRemover.addEventListener('click', async () => {
             if (letra === 'A') compareState.obraA = null;
             else compareState.obraB = null;
             containerClean(targetPanel);
-            targetPanel.appendChild(crearPlaceholderPanel(letra));
+            
+            // Re-inyectamos el placeholder de favoritos asíncronamente
+            targetPanel.appendChild(await crearPlaceholderPanel(letra));
             verificarYRenderizarTablaComparativa();
         });
         cardView.appendChild(btnRemover);
@@ -124,8 +171,6 @@ async function cargarObraEnPanel(id, letra) {
         cardView.appendChild(pArtista);
 
         targetPanel.appendChild(cardView);
-
-        // Evaluamos si ya podemos construir la tabla comparativa técnica abajo
         verificarYRenderizarTablaComparativa();
 
     } catch (err) {
@@ -135,7 +180,10 @@ async function cargarObraEnPanel(id, letra) {
         errP.style.color = '#ef4444';
         errP.textContent = `No se pudo encontrar o cargar el ID: ${id}`;
         targetPanel.appendChild(errP);
-        targetPanel.appendChild(crearPlaceholderPanel(letra));
+        
+        // Caída segura regresando al selector de favoritos
+        const nuevoPlaceholder = await crearPlaceholderPanel(letra);
+        targetPanel.appendChild(nuevoPlaceholder);
     }
 }
 
@@ -143,7 +191,6 @@ function verificarYRenderizarTablaComparativa() {
     const tableContainer = document.getElementById('compare-table-container');
     containerClean(tableContainer);
 
-    // Si falta alguna de las dos obras, volvemos a ocultar la tabla de abajo
     if (!compareState.obraA || !compareState.obraB) {
         tableContainer.classList.add('d-none');
         return;
@@ -157,7 +204,6 @@ function verificarYRenderizarTablaComparativa() {
     table.style.marginTop = '30px';
     table.style.borderCollapse = 'collapse';
 
-    // Encabezado seguro
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
@@ -178,7 +224,6 @@ function verificarYRenderizarTablaComparativa() {
 
     const tbody = document.createElement('tbody');
 
-    // Mapeo ordenado de filas técnicas a contrastar
     const camposAComparar = [
         { label: 'Artista / Creador', key: 'artistDisplayName', default: 'Desconocido' },
         { label: 'Fecha / Período', key: 'objectDate', default: 'S.F.' },

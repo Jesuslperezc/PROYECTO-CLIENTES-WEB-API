@@ -1,28 +1,54 @@
+
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #f1eee7;
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed; 
-    color: #332003; 
+    overflow-x: hidden;
 }
 
 
 .d-none {
     display: none !important;
 }
+
+#paginacion-controls {
+    background: #f1eee7;
+    padding: 12px 0;
+}
+
 /* Contenedor Principal en la esquina inferior derecha */
+/* Modo por defecto (fallback si no hay navbar) — se mantiene igual */
 #metsy-container {
     position: fixed;
-    bottom: 10px; 
+    bottom: 10px;
     right: 25px;
     z-index: 10000;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    /* Tipografía alineada al estilo limpio del portal */
-    font-family: 'Times New Roman', Times, serif; 
+    font-family: 'Times New Roman', Times, serif;
+}
+
+/* Modo integrado al navbar */
+#metsy-container.metsy-in-navbar {
+    position: static;
+    display: flex;
+    align-items: center;
+}
+
+#metsy-container.metsy-in-navbar .metsy-avatar-wrapper {
+    margin-right: 0;
+}
+
+#metsy-container.metsy-in-navbar #metsy-avatar {
+    width: 44px;
+    height: 44px;
+}
+
+/* El chat, cuando Metsy vive en el navbar, cuelga fijo debajo de la barra
+   en vez de aparecer pegado al avatar */
+#metsy-container.metsy-in-navbar #metsy-chat-box {
+    position: fixed;
+    top: 85px;   /* justo debajo del navbar de 75px + margen */
+    right: 25px;
+    margin-bottom: 0;
 }
 
 /* Caja de Chat - Adaptada a la paleta MetHub */
@@ -142,9 +168,11 @@ body {
 
 /* --- CONTROL DEL AVATAR GIGANTE --- */
 .metsy-avatar-wrapper {
-    position: relative;
-    cursor: pointer;
-    margin-right: 10px; 
+    pointer-events: auto;
+}
+
+#metsy-container:has(.metsy-oculto) {
+    z-index: 10000;
 }
 
 #metsy-avatar {
@@ -162,6 +190,76 @@ body {
 .avatar-activo {
     transform: scale(1.06);
     filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.18));
+}
+/* Contenedor de la lista dentro del chat */
+.metsy-lista-favoritos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px; /* Evita que crezca infinitamente, genera scroll interno si hay muchas */
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 5px;
+}
+
+/* El recuadro Nombre + ID */
+.metsy-tarjeta-favorito {
+    background: #ffffff;
+    border: 1px solid #eae6dc;
+    border-left: 3px solid #c4a46a; /* Detalle elegante en oro viejo */
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.metsy-fav-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden; /* Evita desbordes si el nombre de la obra es larguísimo */
+}
+
+.metsy-fav-titulo {
+    font-size: 13px;
+    color: #111111;
+    font-family: 'Times New Roman', Times, serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Corta con "..." si el título es gigante */
+}
+
+.metsy-fav-id {
+    font-size: 11px;
+    color: #8a8475;
+    font-weight: 500;
+}
+
+/* Botoncito de balanza rápido */
+.btn-metsy-comparar-rapido {
+    background: #f7f4ee;
+    border: 1px solid #c4a46a;
+    border-radius: 4px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+}
+
+.btn-metsy-comparar-rapido:hover {
+    background: #c4a46a;
+    transform: scale(1.05);
+}
+
+/* Estados de carga/error */
+.metsy-fav-cargando, .metsy-fav-error {
+    font-size: 12px;
+    color: #8a8475;
+    font-style: italic;
+    padding: 4px;
 }
 
 /* Animaciones */
@@ -1077,4 +1175,32 @@ error-state {
 
 .btn-retry:hover {
     background-color: #b30000;
+}
+
+/* Tarjetas compactas en pantallas muy angostas */
+@media (max-width: 480px) {
+    #grid-explorar {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .obra-card img {
+        height: 160px; /* en vez de 300px fijo */
+    }
+
+    .obra-card h4 {
+        margin: 12px 12px 4px 12px;
+        font-size: 1rem;
+    }
+
+    .obra-card .artist-text,
+    .obra-card .info-extra {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+    #paginacion-controls button {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
 }

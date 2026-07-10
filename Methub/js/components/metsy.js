@@ -2,8 +2,16 @@ const FLUJO_SOPORTE = {
     'inicio': {
         texto: "¡Hola! Soy Metsy, tu guía en MetHub. ¿En qué nos enfocamos hoy?",
         opciones: [
+            { texto: "⭐ Ver mis Obras Favoritas", siguienteNodo: "menu_favoritos" }, // <-- Nueva opción estrella
             { texto: "💡 Datos Curiosos e Historias", siguienteNodo: "menu_curiosidades" },
             { texto: "🛠️ Ayuda y Soporte Técnico", siguienteNodo: "menu_usuario_soporte" }
+        ]
+    },
+    
+    'menu_favoritos': {
+        texto: "Cargando tus obras seleccionadas del museo...",
+        opciones: [
+            { texto: "⬅️ Volver al inicio", siguienteNodo: "inicio" }
         ]
     },
 
@@ -168,33 +176,102 @@ function irANodo(nodoId) {
 
     const nodo = FLUJO_SOPORTE[nodoId] || FLUJO_SOPORTE['inicio'];
     
-    // Cambiar la expresión del avatar según el tipo de nodo
-    if (nodoId === 'fin') {
+    if (nodoId === 'fin' || nodoId === 'inicio') {
         avatar.src = 'assets/metsy_base.png';
-    } else if (nodoId.includes('curiosidad') || nodoId.includes('houdon') || nodoId.includes('egipto')) {
-        // Si tienes un asset feliz o pensativo para las curiosidades
-        avatar.src = 'assets/metsy_base.png'; 
     } else {
         avatar.src = 'assets/metsy_consulta.png'; 
     }
 
-    // 1. Efecto de desvanecimiento para el texto nuevo
     globo.style.opacity = 0;
     setTimeout(() => {
         globo.textContent = nodo.texto;
         globo.style.opacity = 1;
-        
-        // Auto-scroll al recibir texto largo
         chatBody.scrollTop = 0;
     }, 150);
 
-    // 2. Limpiar y renderizar botones con efecto cascada
     opcionesContenedor.innerHTML = '';
+
+    // ==========================================
+    // LÓGICA LOGÍSTICA PARA MOSTRAR FAVORITOS
+    // ==========================================
+    if (nodoId === 'menu_favoritos') {
+        const listaFavsContainer = document.createElement('div');
+        listaFavsContainer.className = 'metsy-lista-favoritos';
+        opcionesContenedor.appendChild(listaFavsContainer);
+
+        // Función interna para renderizar y actualizar la lista en tiempo real
+        const actualizarVistaFavoritos = () => {
+            const favoritosIds = obtenerFavoritos();
+
+            if (favoritosIds.length === 0) {
+                listaFavsContainer.innerHTML = '';
+                globo.textContent = "Aún no has guardado ninguna obra en tus favoritos. ¡Explora la galería y añade algunas!";
+                return;
+            }
+
+            globo.textContent = "Aquí tienes tus obras favoritas guardadas en la galería:";
+            listaFavsContainer.innerHTML = ''; // Limpiamos para renderizar el nuevo estado
+
+            favoritosIds.forEach(async (id) => {
+                const filaFav = document.createElement('div');
+                filaFav.className = 'metsy-tarjeta-favorito';
+                filaFav.style.transition = "all 0.3s ease"; // Para la animación de salida
+                filaFav.innerHTML = `<span class="metsy-fav-cargando">Cargando ID: ${id}...</span>`;
+                listaFavsContainer.appendChild(filaFav);
+                
+                try {
+                    const respuesta = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
+                    const obra = await respuesta.json();
+                    
+                    filaFav.innerHTML = `
+                        <div class="metsy-fav-info">
+                            <strong class="metsy-fav-titulo">${obra.title || 'Sin título'}</strong>
+                            <span class="metsy-fav-id">ID: ${id}</span>
+                        </div>
+                        <div class="metsy-fav-acciones">
+                         
+                            <button class="btn-metsy-eliminar-rapido" title="Quitar de favoritos">X</button>
+                        </div>
+                    `;
+
+                    // Asignamos el evento de eliminación al botón recién creado
+                    const btnEliminar = filaFav.querySelector('.btn-metsy-eliminar-rapido');
+                    btnEliminar.addEventListener('click', () => {
+                        eliminarDeFavoritos(id);
+                        
+                        // Efecto visual de desvanecimiento hacia la derecha antes de quitarlo
+                        filaFav.style.opacity = '0';
+                        filaFav.style.transform = 'translateX(20px)';
+                        
+                        setTimeout(() => {
+                            actualizarVistaFavoritos(); // Refresca la lista completa
+                        }, 300);
+                    });
+
+                } catch (error) {
+                    filaFav.innerHTML = `
+                        <span class="metsy-fav-error">Error al cargar ID: ${id}</span>
+                        <button class="btn-metsy-eliminar-rapido-error" title="Quitar">❌</button>
+                    `;
+                    const btnEliminarErr = filaFav.querySelector('.btn-metsy-eliminar-rapido-error');
+                    btnEliminarErr.addEventListener('click', () => {
+                        eliminarDeFavoritos(id);
+                        actualizarVistaFavoritos();
+                    });
+                }
+            });
+        };
+
+        // Ejecución inicial
+        actualizarVistaFavoritos();
+    }
+
+    // Renderizar los botones de navegación normales abajo (como el botón Volver)
     nodo.opciones.forEach((opcion, index) => {
         const boton = document.createElement('button');
         boton.className = 'btn-metsy-opcion';
         boton.textContent = opcion.texto;
-        boton.style.animationDelay = `${index * 0.08}s`; // Efecto cascada escalonado
+        boton.style.animationDelay = `${index * 0.08}s`; 
         
         boton.addEventListener('click', () => {
             irANodo(opcion.siguienteNodo);
@@ -204,16 +281,32 @@ function irANodo(nodoId) {
     });
 }
 
+function enviarAlComparador(idObra) {
+    console.log(`Redirigiendo al comparador con la obra: ${idObra}`);
+   
+    sessionStorage.setItem('obra_para_comparar', idObra);
+
+    const pestañaComparar = document.getElementById('tab-comparar'); 
+    if(pestañaComparar) pestañaComparar.click();
+}
+
 function cerrarMetsy(avatar, chatBox) {
     chatBox.classList.remove('metsy-visible');
     chatBox.classList.add('metsy-oculto');
     avatar.classList.remove('avatar-activo');
     avatar.src = 'assets/metsy_base.png';
 }
-
 function inyectarMetsy() {
-    if (!document.getElementById('metsy-container')) {
-        document.body.appendChild(crearMetsy());
+    if (document.getElementById('metsy-container')) return;
+
+    const slot = document.getElementById('navbar-metsy-slot');
+    const metsyEl = crearMetsy();
+
+    if (slot) {
+        metsyEl.classList.add('metsy-in-navbar');
+        slot.appendChild(metsyEl);
+    } else {
+        // Fallback por si el navbar todavía no existe
+        document.body.appendChild(metsyEl);
     }
 }
-

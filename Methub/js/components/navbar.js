@@ -1,4 +1,3 @@
-// Fabrica y retorna el elemento HTML del Navbar global
 function createNavBar() {
     const nav = document.createElement('nav');
     nav.id = 'navbar';
@@ -26,8 +25,13 @@ function createNavBar() {
         linksContainer.appendChild(link);
     });
 
+    // Slot donde Metsy se va a insertar (ver metsy.js -> inyectarMetsy)
+    const metsySlot = document.createElement('div');
+    metsySlot.id = 'navbar-metsy-slot';
+
     nav.appendChild(logo);
     nav.appendChild(linksContainer);
+    nav.appendChild(metsySlot);
     return nav;
 }
 

@@ -101,20 +101,42 @@ function setupExplorerEventListeners() {
     document.getElementById('btn-buscar').addEventListener('click', ejecutarFiltradoMet);
     document.getElementById('btn-limpiar').addEventListener('click', limpiarFiltrosExplore);
 }
-
 async function ejecutarFiltradoMet() {
     const query = document.getElementById('search-input').value.trim() || '*';
     const deptId = document.getElementById('select-departamento').value;
     const soloDestacadas = document.getElementById('check-destacadas').checked;
     const soloImagenes = document.getElementById('check-imagenes').checked;
 
-    const anioInicio = document.getElementById('date-begin')?.value.trim();
-    const anioFin = document.getElementById('date-end')?.value.trim();
+    // === MODIFICACIÓN: Captura inteligente con Eras (A.C. / D.C.) ===
+    const anioInicioRaw = document.getElementById('date-begin')?.value.trim();
+    const periodoInicio = document.getElementById('period-begin')?.value || 'DC';
+
+    const anioFinRaw = document.getElementById('date-end')?.value.trim();
+    const periodoFin = document.getElementById('period-end')?.value || 'DC';
+
+    // Conversión matemática individual (A.C. = Negativo)
+    let inicioConvertido = anioInicioRaw ? parseInt(anioInicioRaw, 10) : null;
+    if (inicioConvertido !== null && periodoInicio === 'AC') inicioConvertido *= -1;
+
+    let finConvertido = anioFinRaw ? parseInt(anioFinRaw, 10) : null;
+    if (finConvertido !== null && periodoFin === 'AC') finConvertido *= -1;
+
+    // Aseguramos el orden cronológico estricto en la recta numérica (Min a Max)
+    let anioInicio = null;
+    let anioFin = null;
+
+    if (inicioConvertido !== null && finConvertido !== null) {
+        anioInicio = Math.min(inicioConvertido, finConvertido);
+        anioFin = Math.max(inicioConvertido, finConvertido);
+    } else {
+        anioInicio = inicioConvertido;
+        anioFin = finConvertido;
+    }
+    // ==============================================================
 
     const grid = document.getElementById('grid-explorar');
     const panelAgregados = document.getElementById('panel-agregados');
-    grid.innerHTML="";
-
+    grid.innerHTML = "";
     panelAgregados.innerHTML = "";
 
     // Cancelar cualquier búsqueda/carga anterior en curso
@@ -128,15 +150,18 @@ async function ejecutarFiltradoMet() {
     exploreState.currentPage = 0;
     exploreState.ultimoIdIndexProcesado = 0;
     exploreState.isLoading = false;
-    exploreState.filtroAnioInicio = anioInicio ? parseInt(anioInicio, 10) : null;
-    exploreState.filtroAnioFin = anioFin ? parseInt(anioFin, 10) : null;
+    
+    // Asignamos los valores procesados con su signo al estado local
+    exploreState.filtroAnioInicio = anioInicio;
+    exploreState.filtroAnioFin = anioFin;
 
+    // Construcción de la URL inyectando los años procesados con su signo correspondiente
     let url = `${API_BASE}/search?q=${encodeURIComponent(query)}`;
     if (deptId) url += `&departmentId=${deptId}`;
     if (soloDestacadas) url += `&isHighlight=true`;
     if (soloImagenes) url += `&hasImages=true`;
-    if (anioInicio) url += `&dateBegin=${encodeURIComponent(anioInicio)}`;
-    if (anioFin) url += `&dateEnd=${encodeURIComponent(anioFin)}`;
+    if (anioInicio !== null) url += `&dateBegin=${encodeURIComponent(anioInicio)}`;
+    if (anioFin !== null) url += `&dateEnd=${encodeURIComponent(anioFin)}`;
 
     try {
         const res = await fetch(url, { signal: exploreState.abortController.signal });
@@ -188,7 +213,6 @@ async function ejecutarFiltradoMet() {
         grid.appendChild(moduloError);
     }
 }
-
 async function renderizarPaginaExplore() {
     console.log('[DEBUG] renderizarPaginaExplore llamado. isLoading:', exploreState.isLoading, '| currentPage:', exploreState.currentPage, '| cacheado?', !!exploreState.obrasPorPagina[exploreState.currentPage]);
 

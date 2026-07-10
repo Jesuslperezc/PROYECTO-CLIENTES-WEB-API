@@ -500,8 +500,67 @@ body {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    accent-color: #c4a46a; /* Hace que el check nativo se pinte de dorado */
+    accent-color: #c4a46a; /* Hace que el check nativo se pinte de dorado v*/
 }
+/* Agrupador para unificar el Input con su Select */
+.año-input-block {
+    display: flex;
+    align-items: center;
+    border: 1px solid #eae6dc;
+    border-radius: 4px;
+    background-color: #fdfbf7; /* Fondo pergamino muy suave */
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Aplicamos el enfoque dorado cuando el usuario cliquee dentro del bloque */
+.año-input-block:focus-within {
+    border-color: #c4a46a;
+    box-shadow: 0 0 0 3px rgba(196, 164, 106, 0.15);
+}
+
+/* Ajustamos tu input original para que no tenga bordes propios dentro del bloque */
+.año-input-block .search-input {
+    flex: 1;
+    border: none !important;
+    background: transparent !important;
+    padding: 12px;
+    margin: 0;
+    outline: none;
+    box-shadow: none !important;
+    width: 60%;
+}
+
+/* El selector de período con estética editorial */
+.select-periodo {
+    width: 40%;
+    max-width: 65px;
+    border: none;
+    border-left: 1px solid #eae6dc;
+    background-color: #f7f4ee; /* Tono paspartú un poco más oscuro */
+    color: #6e6450;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    height: 100%;
+    padding: 12px 4px;
+    text-align: center;
+}
+
+/* Limpieza de flechas nativas para inputs numéricos */
+.año-input-block input::-webkit-outer-spin-button,
+.año-input-block input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.año-input-block input[type="number"] {
+    -moz-appearance: textfield; /* Control para Firefox */
+    appearance: textfield;      /* Propiedad estándar moderna */
+}
+
 
 /* Botones de acción - Alta Costura */
 .btn-primary {

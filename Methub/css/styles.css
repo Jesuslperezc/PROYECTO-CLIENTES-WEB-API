@@ -7,7 +7,7 @@ h2 {
     font-family: 'Times New Roman', Times, serif;
     font-size: 2.3rem;
     font-weight: 400;
-    color: #111111; /* Negro absoluto de catálogo */
+    color: #704c0c; /* Negro absoluto de catálogo */
     letter-spacing: 0.5px;
     margin-top: 45px;
     margin-bottom: 24px;
@@ -17,6 +17,23 @@ h2 {
     width: 100%;
     border-bottom: 1px solid #eae6dc; /* Línea fina tono paspartú que cruza la pantalla */
     box-sizing: border-box;
+}
+
+#artist-name-title{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 2.3rem;
+    font-weight: 400;
+    color: #704c0c; /* Negro absoluto de catálogo */
+    letter-spacing: 0.5px;
+    margin-top: 45px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    position: relative;
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #eae6dc; /* Línea fina tono paspartú que cruza la pantalla */
+    box-sizing: border-box;
+
 }
 
 /* El toque de distinción: Una doble línea o acento en oro viejo */
@@ -1492,7 +1509,7 @@ error-state {
     font-family: 'Times New Roman', Times, serif;
     font-size: 3.8rem;
     font-weight: bold;
-    color: #111111; /* Negro absoluto de catálogo impreso */
+    color: #704c0c; /* Negro absoluto de catálogo impreso */
     line-height: 1.15;
     margin: 0 auto 28px auto;
     max-width: 850px;
@@ -1509,6 +1526,130 @@ error-state {
     max-width: 720px;
     margin: 0 auto;
     letter-spacing: 0.2px;
+}
+
+/* ==========================================================================
+   V-06: COMPARADOR DE OBRAS - DISEÑO DE EXPOSICIÓN SIMÉTRICA
+   ========================================================================== */
+#V-06 {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px 100px 40px; /* 100px abajo para dar espacio de scroll libre */
+    box-sizing: border-box;
+    min-height: 120vh; /* Fuerza espacio vertical extra para un scroll majestuoso */
+}
+
+/* Contenedor del Layout de Comparación (Lado a Lado) */
+.compare-layout {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    margin-bottom: 50px;
+    box-sizing: border-box;
+}
+
+/* Paneles individuales (Obra A y Obra B) como pedestales de galería */
+.compare-panel {
+    flex: 1;
+    background-color: #fdfbf7; /* Fondo lienzo suave */
+    border: 1px solid #eae6dc;
+    border-radius: 6px;
+    padding: 30px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    min-height: 450px; /* Altura mínima elegante para albergar la imagen y ficha */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.compare-panel:hover {
+    border-color: #c4a46a; /* Resalta en oro viejo */
+    transform: translateY(-4px); /* Sutil levitación */
+}
+
+/* Estilo sugerido para las imágenes que inyectarás dentro de los paneles */
+.compare-panel img {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border-radius: 2px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Sombra de cuadro flotante */
+    margin-bottom: 20px;
+    background-color: #111111; /* Fondo negro por si la imagen tiene transparencias */
+    padding: 6px;
+    border: 1px solid #eae6dc;
+}
+
+/* ==========================================================================
+   CONTENEDOR DE LA TABLA TÉCNICA COMPARATIVA
+   ========================================================================== */
+#compare-table-container {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border: 1px solid #eae6dc;
+    border-radius: 6px;
+    padding: 40px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(28, 26, 23, 0.02);
+}
+
+/* Estilos para cuando inyectes la tabla dinámicamente */
+#compare-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.1rem;
+}
+
+#compare-table-container th {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #c4a46a; /* Títulos de columna en oro viejo */
+    padding: 16px;
+    border-bottom: 2px solid #eae6dc;
+    text-align: left;
+}
+
+#compare-table-container td {
+    padding: 18px 16px;
+    color: #111111;
+    border-bottom: 1px solid #f4f1ea;
+}
+
+/* Resaltado de la columna de atributos (ej: Autor, Periodo, Cultura) */
+#compare-table-container tr td:first-child {
+    font-weight: bold;
+    color: #6e6450;
+    width: 20%;
+    letter-spacing: 0.3px;
+}
+
+/* Fila alterna para lectura descansada de catálogo */
+#compare-table-container tr:nth-child(even) {
+    background-color: #fdfbf7;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 992px) {
+    .compare-layout {
+        flex-direction: column; /* Se apilan en móvil/tablet sin romperse */
+        gap: 24px;
+    }
+    #V-06 {
+        padding: 20px 20px 60px 20px;
+    }
+    #compare-table-container {
+        padding: 20px;
+        overflow-x: auto; /* Scroll horizontal si la tabla es muy ancha en móviles */
+    }
 }
 
 /* ==========================================================================

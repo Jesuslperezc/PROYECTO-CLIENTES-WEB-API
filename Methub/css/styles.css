@@ -1393,44 +1393,50 @@ error-state {
     align-items: center !important;
     justify-content: center !important;
     padding: 3rem 1.5rem;
-    background-color: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 8px;
+    background-color: #FDFBF7;
+    border: 1px solid #8C7B5B;
+    border-radius: 6px;
     text-align: center;
     max-width: 450px;
     margin: 2rem auto;
     box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(140, 123, 91, 0.05);
 }
 
 .error-icon {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
+    filter: sepia(0.3);
 }
 
 .error-text {
-    color: #cccccc;
+    font-family: 'Inter', sans-serif;
+    color: #6B6660;
     font-size: 0.95rem;
     line-height: 1.5;
     margin: 0 0 1.5rem 0;
 }
 
 .btn-retry {
-    background-color: #e60000;
-    color: #ffffff;
-    border: none;
+    background-color: #fef3cf;
+    color: #422a06;
+    border: 1px solid #715116;
     padding: 0.6rem 1.5rem;
+    font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 .btn-retry:hover {
-    background-color: #b30000;
+    background-color: #8f6f34;
+    color: #FFFFFF;
 }
 
-/* Tarjetas compactas en pantallas muy angostas */
 @media (max-width: 480px) {
     #grid-explorar {
         grid-template-columns: 1fr;
@@ -1438,7 +1444,7 @@ error-state {
     }
 
     .obra-card img {
-        height: 160px; /* en vez de 300px fijo */
+        height: 160px;
     }
 
     .obra-card h4 {
@@ -1457,6 +1463,7 @@ error-state {
         font-size: 0.85rem;
     }
 }
+
 /* ==========================================================================
    V-01: HERO SECTION - ESTILO EDITORIAL MET
    ========================================================================== */
